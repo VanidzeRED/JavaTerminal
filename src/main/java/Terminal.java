@@ -1,21 +1,29 @@
 import jssc.*;
 
 public class Terminal {
+    static String serialPortName = "COM1";
+    static int baudRate = 9600;
+    static int dataBits = 8;
+    static int stopBits = 1+2;
+    static int parity = 0;
+
     public static void main(String[] args) {
         SerialPort serialPort;
         SerialPortFinder.findComPorts();
-        serialPort = new SerialPort("COM1");
+        serialPort = new SerialPort(serialPortName);
+        ComPortListener comPortListener = new ComPortListener();
         try {
             serialPort.openPort();
-            serialPort.setParams(SerialPort.BAUDRATE_9600,
-                    SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1,
-                    SerialPort.PARITY_NONE);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Serial port was successfully opened");
+        try {
+            serialPort.setParams(baudRate, dataBits, stopBits, parity, true, true);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            ComPortReader comPortReader = new ComPortReader();
-            comPortReader.setSerialPort(serialPort);
-            serialPort.addEventListener(comPortReader, SerialPort.MASK_RXCHAR);
+            comPortListener.setSerialPort(serialPort);
+            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
