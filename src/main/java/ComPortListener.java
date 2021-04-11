@@ -3,7 +3,12 @@ import jssc.*;
 public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
     StringBuilder receivedData = new StringBuilder();
+    DataFile dataFile;
     int countOfBits;
+
+    public void setDataFile(DataFile dataFile) {
+        this.dataFile = dataFile;
+    }
 
     public void setSerialPort(SerialPort hSerial) {
         this.serialPort = hSerial;
@@ -33,6 +38,7 @@ public class ComPortListener implements SerialPortEventListener {
                 System.out.println("Received bits" + getCountOfBits());
                 appendToReceivedData(receivedData);
                 System.out.println(getReceivedData());
+                dataFile.writeToFile(receivedData);
             }
             catch (SerialPortException e) {
                 e.printStackTrace();
