@@ -3,13 +3,9 @@ import jssc.*;
 public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
     StringBuilder receivedData = new StringBuilder();
-    DataFile dataFile;
     ReadingThread readingThread;
+    DataFile dataFile;
     int countOfBits;
-
-    public void setDataFile(DataFile dataFile) {
-        this.dataFile = dataFile;
-    }
 
     public void setSerialPort(SerialPort hSerial) {
         this.serialPort = hSerial;
@@ -31,8 +27,8 @@ public class ComPortListener implements SerialPortEventListener {
         return countOfBits;
     }
 
-    public void setReadingThread(ReadingThread readingThread) {
-        this.readingThread = readingThread;
+    public void setDataFile(DataFile dataFile) {
+        this.dataFile = dataFile;
     }
 
     public void serialEvent(SerialPortEvent event) {
@@ -40,14 +36,15 @@ public class ComPortListener implements SerialPortEventListener {
         if(event.isRXCHAR() && event.getEventValue() > 0){
             try {
                 String receivedData = serialPort.readString(getCountOfBits());
-                //System.out.println("Received bits" + getCountOfBits());
                 appendToReceivedData(receivedData);
-                readingThread.appendToReceivedData(receivedData);
-                if (!readingThread.isAlive()){
+                if ((readingThread == null) || (!readingThread.isAlive())){
+                    readingThread = new ReadingThread();
+                    readingThread.setDataFile(dataFile);
                     readingThread.start();
                 }
-                //System.out.println(getReceivedData());
-                //dataFile.writeToFile(receivedData);
+                if ((readingThread != null)){
+                    readingThread.appendToReceivedData(receivedData);
+                }
             }
             catch (SerialPortException e) {
                 e.printStackTrace();
