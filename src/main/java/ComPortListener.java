@@ -4,6 +4,7 @@ public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
     StringBuilder receivedData = new StringBuilder();
     DataFile dataFile;
+    ReadingThread readingThread;
     int countOfBits;
 
     public void setDataFile(DataFile dataFile) {
@@ -30,15 +31,23 @@ public class ComPortListener implements SerialPortEventListener {
         return countOfBits;
     }
 
+    public void setReadingThread(ReadingThread readingThread) {
+        this.readingThread = readingThread;
+    }
+
     public void serialEvent(SerialPortEvent event) {
         setCountOfBits(event.getEventValue());
         if(event.isRXCHAR() && event.getEventValue() > 0){
             try {
                 String receivedData = serialPort.readString(getCountOfBits());
-                System.out.println("Received bits" + getCountOfBits());
+                //System.out.println("Received bits" + getCountOfBits());
                 appendToReceivedData(receivedData);
-                System.out.println(getReceivedData());
-                dataFile.writeToFile(receivedData);
+                readingThread.appendToReceivedData(receivedData);
+                if (!readingThread.isAlive()){
+                    readingThread.start();
+                }
+                //System.out.println(getReceivedData());
+                //dataFile.writeToFile(receivedData);
             }
             catch (SerialPortException e) {
                 e.printStackTrace();

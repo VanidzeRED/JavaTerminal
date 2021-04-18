@@ -1,5 +1,7 @@
 import jssc.*;
 
+import java.util.concurrent.Semaphore;
+
 public class Terminal {
     static String serialPortName = "COM1";
     static String fileName = "info.txt";
@@ -8,12 +10,22 @@ public class Terminal {
     static int stopBits = 1+2;
     static int parity = 0;
 
+    String receivedData;
+
+    public void setReceivedData(String receivedData) {
+        this.receivedData = receivedData;
+    }
+
+    public String getReceivedData() {
+        return receivedData;
+    }
+
     public static void main(String[] args) {
-        SerialPort serialPort;
         SerialPortFinder.findComPorts();
-        serialPort = new SerialPort(serialPortName);
+        SerialPort serialPort = new SerialPort(serialPortName);
         ComPortListener comPortListener = new ComPortListener();
         DataFile dataFile = new DataFile(fileName);
+        ReadingThread readingThread = new ReadingThread(comPortListener);
         try {
             serialPort.openPort();
         } catch (SerialPortException e) {
@@ -26,6 +38,7 @@ public class Terminal {
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
             comPortListener.setSerialPort(serialPort);
             comPortListener.setDataFile(dataFile);
+            comPortListener.setReadingThread(readingThread);
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
         } catch (SerialPortException e) {
             e.printStackTrace();
