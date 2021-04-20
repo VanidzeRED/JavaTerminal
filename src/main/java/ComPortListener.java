@@ -5,6 +5,8 @@ public class ComPortListener implements SerialPortEventListener {
     StringBuilder receivedData = new StringBuilder();
     ReadingThread readingThread;
     DataFile dataFile;
+    MqttPublisher publisher;
+
     int countOfBits;
 
     public void setSerialPort(SerialPort hSerial) {
@@ -13,10 +15,6 @@ public class ComPortListener implements SerialPortEventListener {
 
     public void appendToReceivedData(String receivedData) {
         this.receivedData.append(receivedData);
-    }
-
-    public String getReceivedData() {
-        return receivedData.toString();
     }
 
     public void setCountOfBits(int countOfBits) {
@@ -31,6 +29,10 @@ public class ComPortListener implements SerialPortEventListener {
         this.dataFile = dataFile;
     }
 
+    public void setPublisher(MqttPublisher publisher) {
+        this.publisher = publisher;
+    }
+
     public void serialEvent(SerialPortEvent event) {
         setCountOfBits(event.getEventValue());
         if(event.isRXCHAR() && event.getEventValue() > 0){
@@ -40,6 +42,7 @@ public class ComPortListener implements SerialPortEventListener {
                 if ((readingThread == null) || (!readingThread.isAlive())){
                     readingThread = new ReadingThread();
                     readingThread.setDataFile(dataFile);
+                    readingThread.setPublisher(publisher);
                     readingThread.start();
                 }
                 if ((readingThread != null)){
