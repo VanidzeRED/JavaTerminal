@@ -34,4 +34,13 @@ public class MqttPublisher {
             System.out.println("Can't send message\n");
         }
     }
+
+    public void subscribe() {
+        try {
+            IMqttMessageListener messageListener = (topic, message) -> System.out.println("Message from server: " + message);
+            client.subscribe(Terminal.topic, messageListener);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
 }

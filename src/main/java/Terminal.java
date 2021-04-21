@@ -1,4 +1,6 @@
 import jssc.*;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class Terminal {
     static String serialPortName = "COM1";
@@ -17,6 +19,7 @@ public class Terminal {
         DataFile dataFile = new DataFile(fileName);
         MqttPublisher publisher = new MqttPublisher();
         publisher.setConnection();
+        publisher.subscribe();
         try {
             serialPort.openPort();
         } catch (SerialPortException e) {
