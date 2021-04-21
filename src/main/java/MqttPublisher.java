@@ -7,7 +7,7 @@ public class MqttPublisher {
     public MqttPublisher(){
         this.message = new MqttMessage();
         try {
-            this.client = new MqttClient(Terminal.serverName, MqttClient.generateClientId());
+            this.client = new MqttClient(Terminal.serverAddress, MqttClient.generateClientId());
             System.out.println("Client created\n");
         } catch (MqttException e) {
             e.printStackTrace();
@@ -28,7 +28,7 @@ public class MqttPublisher {
     public void sendMessage(String string) {
         message.setPayload(string.getBytes());
         try {
-            client.publish("Received data", message);
+            client.publish(Terminal.topic, message);
         } catch (MqttException e) {
             e.printStackTrace();
             System.out.println("Can't send message\n");

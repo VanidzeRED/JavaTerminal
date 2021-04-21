@@ -3,7 +3,8 @@ import jssc.*;
 public class Terminal {
     static String serialPortName = "COM1";
     static String fileName = "info.txt";
-    static String serverName;
+    static String serverAddress = "tcp://84.201.135.43:1883";
+    static String topic = "Received data";
     static int baudRate = 9600;
     static int dataBits = 8;
     static int stopBits = 1+2;

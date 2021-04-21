@@ -24,6 +24,7 @@ target
 *.xml
 *.iml
 .idea
+.lck
 info.txt
 
 !pom.xml
