@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class ReadingThread extends Thread {
     StringBuilder receivedData = new StringBuilder();
     DataFile dataFile;
@@ -20,31 +22,31 @@ public class ReadingThread extends Thread {
     }
 
     public String[] divideData() {
-        int data_length = Terminal.PACKAGE_LENGTH;
-        int indexAcc = 1;
-        int indexGyr = indexAcc + 48;
-        int indexMag = indexGyr + 48;
+        int indexAcc = 0;
+        int indexGyr = indexAcc + 6;
+        int indexMag = indexGyr + 6;
         String receivedData = getReceivedData();
-        String accselerometerData = receivedData.substring(indexAcc, indexGyr);
+        String accelerometerData = receivedData.substring(indexAcc, indexGyr);
         String gyroscopeData = receivedData.substring(indexGyr, indexMag);
         String magnetometerData = receivedData.substring(indexMag);
-        return new String[]{accselerometerData, gyroscopeData, magnetometerData};
+        return new String[]{accelerometerData, gyroscopeData, magnetometerData};
+    }
+
+    public void doThreadOperation() {
+        receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
+        System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
+        System.out.println(Arrays.toString(divideData()));
+        dataFile.writeToFile(receivedData.toString());
+        publisher.sendMessage(receivedData.toString());
     }
 
     @Override
     public void run() {
-        try {
-            while (receivedData.length() < Terminal.PACKAGE_LENGTH) {
-                sleep(100);
-            }
+        while (true) {
             if (receivedData.length() >= Terminal.PACKAGE_LENGTH) {
-                receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
-                System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
-                dataFile.writeToFile(receivedData.toString());
-                publisher.sendMessage(receivedData.toString());
+                doThreadOperation();
+                break;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

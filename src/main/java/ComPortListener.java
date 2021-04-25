@@ -28,20 +28,30 @@ public class ComPortListener implements SerialPortEventListener {
         this.publisher = publisher;
     }
 
+    public boolean contains(String string, char ch) {
+        for (char symbol : string.toCharArray()) {
+            if (symbol == ch){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void serialEvent(SerialPortEvent event) {
         setCountOfBits(event.getEventValue());
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
                 String receivedData = serialPort.readString(getCountOfBits());
-                /*if (!receivedData.contains(Terminal.PACKAGE_START_LABEL)) {
-                    return;
-                }*/
                 if ((readingThread == null) || (!readingThread.isAlive())) {
+                    if (!(contains(receivedData, Terminal.PACKAGE_START_LABEL_1) &&
+                            (receivedData.charAt(Terminal.PACKAGE_START_LABEL_1 + 1) == Terminal.PACKAGE_START_LABEL_2))) {
+                        return;
+                    }
                     readingThread = new ReadingThread();
                     readingThread.setDataFile(dataFile);
                     readingThread.setPublisher(publisher);
                     readingThread.start();
-                    receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL));
+                    receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL_2 + 1));
                 }
                 if ((readingThread != null)) {
                     readingThread.appendToReceivedData(receivedData);

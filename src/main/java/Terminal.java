@@ -5,12 +5,13 @@ public class Terminal {
     static String FILE_NAME = "info.txt";
     static String SERVER_ADRESS = "tcp://84.201.135.43:1883";
     static String MQTT_TOPIC = "Received data";
-    static String PACKAGE_START_LABEL = "$";
+    static char PACKAGE_START_LABEL_1 = 170;
+    static char PACKAGE_START_LABEL_2 = 187;
     static int BAUDRATE = 9600;
     static int DATABITS = 8;
     static int STOPBITS = 1 + 2;
     static int PARITY = 0;
-    static int PACKAGE_LENGTH = 144;
+    static int PACKAGE_LENGTH = 18;
 
     public static void main(String[] args) {
         SerialPortFinder.findComPorts();
@@ -26,6 +27,8 @@ public class Terminal {
             e.printStackTrace();
         }
         System.out.println("Serial port was successfully opened");
+        System.out.println(PACKAGE_START_LABEL_1);
+        System.out.println(PACKAGE_START_LABEL_2);
         try {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY, true, true);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
