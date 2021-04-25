@@ -15,9 +15,9 @@ public class DataFile {
         return strLen;
     }
 
-    public DataFile (String fileName){
+    public DataFile(String fileName) {
         this.fileName = fileName;
-        try{
+        try {
             fileWriter = new FileWriter(fileName, false);
             fileReader = new FileReader(fileName);
         } catch (IOException e) {
@@ -25,7 +25,7 @@ public class DataFile {
         }
     }
 
-    public void writeToFile (String string) {
+    public void writeToFile(String string) {
         try {
             fileWriter.append(string);
             fileWriter.flush();
@@ -35,7 +35,7 @@ public class DataFile {
         }
     }
 
-    public String  readFromFile () {
+    public String readFromFile() {
         char[] data = new char[getStrLen()];
         StringBuilder stringBuilder = new StringBuilder();
         try {

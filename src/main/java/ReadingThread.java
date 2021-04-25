@@ -1,4 +1,4 @@
-public class ReadingThread extends Thread{
+public class ReadingThread extends Thread {
     StringBuilder receivedData = new StringBuilder();
     DataFile dataFile;
     MqttPublisher publisher;
@@ -19,13 +19,30 @@ public class ReadingThread extends Thread{
         this.publisher = publisher;
     }
 
+    public String[] divideData() {
+        int data_length = Terminal.PACKAGE_LENGTH;
+        int indexAcc = 1;
+        int indexGyr = indexAcc + 48;
+        int indexMag = indexGyr + 48;
+        String receivedData = getReceivedData();
+        String accselerometerData = receivedData.substring(indexAcc, indexGyr);
+        String gyroscopeData = receivedData.substring(indexGyr, indexMag);
+        String magnetometerData = receivedData.substring(indexMag);
+        return new String[]{accselerometerData, gyroscopeData, magnetometerData};
+    }
+
     @Override
     public void run() {
         try {
-            sleep(100);
-            System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
-            dataFile.writeToFile(receivedData.toString());
-            publisher.sendMessage(receivedData.toString());
+            while (receivedData.length() < Terminal.PACKAGE_LENGTH) {
+                sleep(100);
+            }
+            if (receivedData.length() >= Terminal.PACKAGE_LENGTH) {
+                receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
+                System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
+                dataFile.writeToFile(receivedData.toString());
+                publisher.sendMessage(receivedData.toString());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

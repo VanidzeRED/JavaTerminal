@@ -2,7 +2,6 @@ import jssc.*;
 
 public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
-    StringBuilder receivedData = new StringBuilder();
     ReadingThread readingThread;
     DataFile dataFile;
     MqttPublisher publisher;
@@ -11,10 +10,6 @@ public class ComPortListener implements SerialPortEventListener {
 
     public void setSerialPort(SerialPort hSerial) {
         this.serialPort = hSerial;
-    }
-
-    public void appendToReceivedData(String receivedData) {
-        this.receivedData.append(receivedData);
     }
 
     public void setCountOfBits(int countOfBits) {
@@ -35,21 +30,23 @@ public class ComPortListener implements SerialPortEventListener {
 
     public void serialEvent(SerialPortEvent event) {
         setCountOfBits(event.getEventValue());
-        if(event.isRXCHAR() && event.getEventValue() > 0){
+        if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
                 String receivedData = serialPort.readString(getCountOfBits());
-                appendToReceivedData(receivedData);
-                if ((readingThread == null) || (!readingThread.isAlive())){
+                /*if (!receivedData.contains(Terminal.PACKAGE_START_LABEL)) {
+                    return;
+                }*/
+                if ((readingThread == null) || (!readingThread.isAlive())) {
                     readingThread = new ReadingThread();
                     readingThread.setDataFile(dataFile);
                     readingThread.setPublisher(publisher);
                     readingThread.start();
+                    receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL));
                 }
-                if ((readingThread != null)){
+                if ((readingThread != null)) {
                     readingThread.appendToReceivedData(receivedData);
                 }
-            }
-            catch (SerialPortException e) {
+            } catch (SerialPortException e) {
                 e.printStackTrace();
             }
         }

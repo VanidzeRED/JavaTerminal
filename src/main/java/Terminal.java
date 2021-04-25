@@ -1,25 +1,25 @@
 import jssc.*;
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class Terminal {
-    static String serialPortName = "COM1";
-    static String fileName = "info.txt";
-    static String serverAddress = "tcp://84.201.135.43:1883";
-    static String topic = "Received data";
-    static int baudRate = 9600;
-    static int dataBits = 8;
-    static int stopBits = 1+2;
-    static int parity = 0;
+    static String SERIAL_PORT_NAME = "COM1";
+    static String FILE_NAME = "info.txt";
+    static String SERVER_ADRESS = "tcp://84.201.135.43:1883";
+    static String MQTT_TOPIC = "Received data";
+    static String PACKAGE_START_LABEL = "$";
+    static int BAUDRATE = 9600;
+    static int DATABITS = 8;
+    static int STOPBITS = 1 + 2;
+    static int PARITY = 0;
+    static int PACKAGE_LENGTH = 144;
 
     public static void main(String[] args) {
         SerialPortFinder.findComPorts();
-        SerialPort serialPort = new SerialPort(serialPortName);
+        SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         ComPortListener comPortListener = new ComPortListener();
-        DataFile dataFile = new DataFile(fileName);
+        DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
         publisher.setConnection();
-        publisher.subscribe();
+        //publisher.subscribe();
         try {
             serialPort.openPort();
         } catch (SerialPortException e) {
@@ -27,7 +27,7 @@ public class Terminal {
         }
         System.out.println("Serial port was successfully opened");
         try {
-            serialPort.setParams(baudRate, dataBits, stopBits, parity, true, true);
+            serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY, true, true);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
             comPortListener.setSerialPort(serialPort);
