@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class ReadingThread extends Thread {
@@ -32,6 +33,26 @@ public class ReadingThread extends Thread {
         return new String[]{accelerometerData, gyroscopeData, magnetometerData};
     }
 
+    public double[] parser(int index, int endian) {
+        int j = 0;
+        byte[] message = receivedData.toString().getBytes();
+        byte[] out = new byte[]{message[index], message[index + 1], message[index + 2],
+                message[index + 3], message[index + 4], message[index + 5]};
+        double outDouble[] = new double[message.length / 6];
+        if (endian == 0) {
+            for (int k = 2; k < message.length / 2 - 2; k += 2) {
+                outDouble[j++] = toInt(out[k - 2], out[k - 1]);
+            }
+        } else if (endian == 1) {
+            for (int k = 2; k < message.length / 2 - 2; k += 2) {
+                outDouble[j++] = toInt(out[k - 1], out[k - 2]);
+            }
+        } else {
+            return null;
+        }
+        return outDouble;
+    }
+
     public void doThreadOperation() {
         receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
         System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
@@ -42,11 +63,16 @@ public class ReadingThread extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-            if (receivedData.length() >= Terminal.PACKAGE_LENGTH) {
-                doThreadOperation();
-                break;
+        try {
+            while (true) {
+                sleep(100);
+                if (receivedData.length() >= Terminal.PACKAGE_LENGTH) {
+                    doThreadOperation();
+                    break;
+                }
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

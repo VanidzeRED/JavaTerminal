@@ -27,8 +27,6 @@ public class Terminal {
             e.printStackTrace();
         }
         System.out.println("Serial port was successfully opened");
-        System.out.println(PACKAGE_START_LABEL_1);
-        System.out.println(PACKAGE_START_LABEL_2);
         try {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY, true, true);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |

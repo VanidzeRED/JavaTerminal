@@ -43,15 +43,15 @@ public class ComPortListener implements SerialPortEventListener {
             try {
                 String receivedData = serialPort.readString(getCountOfBits());
                 if ((readingThread == null) || (!readingThread.isAlive())) {
-                    if (!(contains(receivedData, Terminal.PACKAGE_START_LABEL_1) &&
+                    /*if (!(contains(receivedData, Terminal.PACKAGE_START_LABEL_1) &&
                             (receivedData.charAt(Terminal.PACKAGE_START_LABEL_1 + 1) == Terminal.PACKAGE_START_LABEL_2))) {
                         return;
-                    }
+                    }*/
                     readingThread = new ReadingThread();
                     readingThread.setDataFile(dataFile);
                     readingThread.setPublisher(publisher);
                     readingThread.start();
-                    receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL_2 + 1));
+                    //receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL_2 + 1));
                 }
                 if ((readingThread != null)) {
                     readingThread.appendToReceivedData(receivedData);
