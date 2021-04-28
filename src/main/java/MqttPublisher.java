@@ -7,7 +7,7 @@ public class MqttPublisher {
     public MqttPublisher() {
         this.message = new MqttMessage();
         try {
-            this.client = new MqttClient(Terminal.SERVER_ADRESS, MqttClient.generateClientId());
+            this.client = new MqttClient(Terminal.SERVER_ADDRESS, MqttClient.generateClientId());
             System.out.println("Client created\n");
         } catch (MqttException e) {
             e.printStackTrace();

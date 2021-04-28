@@ -3,7 +3,7 @@ import jssc.*;
 public class Terminal {
     static String SERIAL_PORT_NAME = "COM1";
     static String FILE_NAME = "info.txt";
-    static String SERVER_ADRESS = "tcp://84.201.135.43:1883";
+    static String SERVER_ADDRESS = "tcp://84.201.135.43:1883";
     static String MQTT_TOPIC = "Received data";
     static char PACKAGE_START_LABEL_1 = 170;
     static char PACKAGE_START_LABEL_2 = 187;
@@ -19,7 +19,7 @@ public class Terminal {
         ComPortListener comPortListener = new ComPortListener();
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
-        publisher.setConnection();
+        //publisher.setConnection();
         //publisher.subscribe();
         try {
             serialPort.openPort();

@@ -1,3 +1,4 @@
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -53,12 +54,22 @@ public class ReadingThread extends Thread {
         return outDouble;
     }
 
+    public int toInt(byte hb, byte lb) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[]{hb, lb});
+        short ans = bb.getShort();
+        return ans;
+    }
+
     public void doThreadOperation() {
         receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
-        System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
-        System.out.println(Arrays.toString(divideData()));
+        double[] a = parser(0, 1);
+        double[] g = parser(6, 1);
+        double[] m = parser(12, 1);
+        //System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
+        //System.out.println(Arrays.toString(divideData()));
+        System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
         dataFile.writeToFile(receivedData.toString());
-        publisher.sendMessage(receivedData.toString());
+        //publisher.sendMessage(receivedData.toString());
     }
 
     @Override
