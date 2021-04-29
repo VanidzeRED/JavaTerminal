@@ -25,8 +25,8 @@ public class MqttPublisher {
         }
     }
 
-    public void sendMessage(String string) {
-        message.setPayload(string.getBytes());
+    public void sendMessage(byte[] bytes) {
+        message.setPayload(bytes);
         try {
             client.publish(Terminal.MQTT_TOPIC, message);
         } catch (MqttException e) {

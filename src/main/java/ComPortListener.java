@@ -1,23 +1,16 @@
 import jssc.*;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
-    ReadingThread readingThread;
     DataFile dataFile;
     MqttPublisher publisher;
-
-    int countOfBits;
+    byte[] receivedData;
 
     public void setSerialPort(SerialPort hSerial) {
         this.serialPort = hSerial;
-    }
-
-    public void setCountOfBits(int countOfBits) {
-        this.countOfBits = countOfBits;
-    }
-
-    public int getCountOfBits() {
-        return countOfBits;
     }
 
     public void setDataFile(DataFile dataFile) {
@@ -28,33 +21,59 @@ public class ComPortListener implements SerialPortEventListener {
         this.publisher = publisher;
     }
 
-    public boolean contains(String string, char ch) {
-        for (char symbol : string.toCharArray()) {
-            if (symbol == ch){
-                return true;
+    public double[] parser(int index, int endian) {
+        int j = 0;
+        byte[] out = new byte[]{receivedData[index], receivedData[index + 1], receivedData[index + 2],
+                receivedData[index + 3], receivedData[index + 4], receivedData[index + 5]};
+        double[] outDouble = new double[receivedData.length / 6];
+        if (endian == 0) {
+            for (int k = 2; k < receivedData.length / 2 - 2; k += 2) {
+                outDouble[j++] = toInt(out[k - 2], out[k - 1]);
             }
+        } else if (endian == 1) {
+            for (int k = 2; k < receivedData.length / 2 - 2; k += 2) {
+                outDouble[j++] = toInt(out[k - 1], out[k - 2]);
+            }
+        } else {
+            return null;
         }
-        return false;
+        return outDouble;
+    }
+
+    public int toInt(byte hb, byte lb) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[]{hb, lb});
+        short ans = bb.getShort();
+        return ans;
+    }
+
+    public void doTerminalOperation() {
+        double[] a = parser(0, 1);
+        double[] g = parser(6, 1);
+        double[] m = parser(12, 1);
+        System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
+        dataFile.writeToFile(Arrays.toString(receivedData));
+        publisher.sendMessage(receivedData);
     }
 
     public void serialEvent(SerialPortEvent event) {
-        setCountOfBits(event.getEventValue());
+        receivedData = null;
+        int check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
-                String receivedData = serialPort.readString(getCountOfBits());
-                if ((readingThread == null) || (!readingThread.isAlive())) {
-                    /*if (!(contains(receivedData, Terminal.PACKAGE_START_LABEL_1) &&
-                            (receivedData.charAt(Terminal.PACKAGE_START_LABEL_1 + 1) == Terminal.PACKAGE_START_LABEL_2))) {
+                check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
+                //System.out.println(check);
+                if (check == Terminal.PACKAGE_START_LABEL_1) {
+                    check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
+                    if (check == Terminal.PACKAGE_START_LABEL_2) {
+                        receivedData = serialPort.readBytes(18);
+                    } else {
                         return;
-                    }*/
-                    readingThread = new ReadingThread();
-                    readingThread.setDataFile(dataFile);
-                    readingThread.setPublisher(publisher);
-                    readingThread.start();
-                    //receivedData = receivedData.substring(receivedData.indexOf(Terminal.PACKAGE_START_LABEL_2 + 1));
+                    }
+                } else {
+                    return;
                 }
-                if ((readingThread != null)) {
-                    readingThread.appendToReceivedData(receivedData);
+                if (receivedData != null) {
+                    doTerminalOperation();
                 }
             } catch (SerialPortException e) {
                 e.printStackTrace();

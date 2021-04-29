@@ -74,16 +74,6 @@ public class ReadingThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (true) {
-                sleep(100);
-                if (receivedData.length() >= Terminal.PACKAGE_LENGTH) {
-                    doThreadOperation();
-                    break;
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        doThreadOperation();
     }
 }
