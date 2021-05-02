@@ -50,6 +50,7 @@ public class ComPortListener implements SerialPortEventListener {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
+        JsonFile file = new JsonFile(a, g, m);
         System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
         dataFile.writeToFile(Arrays.toString(receivedData));
         publisher.sendMessage(receivedData);
