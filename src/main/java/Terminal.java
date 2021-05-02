@@ -1,7 +1,7 @@
 import jssc.*;
 
 public class Terminal {
-    static String SERIAL_PORT_NAME = "COM7";
+    static String SERIAL_PORT_NAME = "COM1";
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
     static String MQTT_TOPIC = "Received data";

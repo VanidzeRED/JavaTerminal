@@ -1,3 +1,5 @@
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import jssc.*;
 
 import java.nio.ByteBuffer;
@@ -51,9 +53,12 @@ public class ComPortListener implements SerialPortEventListener {
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
         JsonFile file = new JsonFile(a, g, m);
-        System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
+        byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
+        JsonFile newFile = JSON.parseObject(jsonFileByteList, JsonFile.class);
+        newFile.getData();
+        //System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
         dataFile.writeToFile(Arrays.toString(receivedData));
-        publisher.sendMessage(receivedData);
+        publisher.sendMessage(jsonFileByteList);
     }
 
     public void serialEvent(SerialPortEvent event) {
@@ -61,7 +66,7 @@ public class ComPortListener implements SerialPortEventListener {
         int check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
-                check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
+                /*check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
                 //System.out.println(check);
                 if (check == Terminal.PACKAGE_START_LABEL_1) {
                     check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
@@ -72,7 +77,8 @@ public class ComPortListener implements SerialPortEventListener {
                     }
                 } else {
                     return;
-                }
+                }*/
+                receivedData = serialPort.readBytes(18);
                 if (receivedData != null) {
                     doTerminalOperation();
                 }
