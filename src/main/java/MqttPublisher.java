@@ -1,3 +1,4 @@
+import com.alibaba.fastjson.JSON;
 import org.eclipse.paho.client.mqttv3.*;
 
 public class MqttPublisher {
@@ -37,7 +38,11 @@ public class MqttPublisher {
 
     public void subscribe() {
         try {
-            IMqttMessageListener messageListener = (topic, message) -> System.out.println("Message from server: " + message);
+            IMqttMessageListener messageListener = (topic, message) -> {
+                JsonFile newFile = JSON.parseObject(String.valueOf(message), JsonFile.class);
+                System.out.println("Message from server:");
+                newFile.getData();
+            };
             client.subscribe(Terminal.MQTT_TOPIC, messageListener);
         } catch (MqttException e) {
             e.printStackTrace();

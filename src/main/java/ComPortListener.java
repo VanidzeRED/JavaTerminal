@@ -48,16 +48,24 @@ public class ComPortListener implements SerialPortEventListener {
         return ans;
     }
 
+    public Integer[] arrayToInt(byte[] array) {
+        Integer[] newInt = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            Byte current = array[i];
+            newInt[i] = Integer.parseUnsignedInt(current.toString());
+        }
+        return newInt;
+    }
+
     public void doTerminalOperation() {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
         JsonFile file = new JsonFile(a, g, m);
         byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
-        JsonFile newFile = JSON.parseObject(jsonFileByteList, JsonFile.class);
-        newFile.getData();
         //System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
         dataFile.writeToFile(Arrays.toString(receivedData));
+        dataFile.writeToFile("\n");
         publisher.sendMessage(jsonFileByteList);
     }
 
@@ -66,10 +74,10 @@ public class ComPortListener implements SerialPortEventListener {
         int check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
-                /*check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
+                check = serialPort.readBytes(1)[0];
                 //System.out.println(check);
                 if (check == Terminal.PACKAGE_START_LABEL_1) {
-                    check = Byte.toUnsignedInt(serialPort.readBytes(1)[0]);
+                    check = serialPort.readBytes(1)[0];
                     if (check == Terminal.PACKAGE_START_LABEL_2) {
                         receivedData = serialPort.readBytes(18);
                     } else {
@@ -77,8 +85,8 @@ public class ComPortListener implements SerialPortEventListener {
                     }
                 } else {
                     return;
-                }*/
-                receivedData = serialPort.readBytes(18);
+                }
+                //receivedData = serialPort.readBytes(18);
                 if (receivedData != null) {
                     doTerminalOperation();
                 }
