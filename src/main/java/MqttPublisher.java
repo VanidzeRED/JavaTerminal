@@ -33,8 +33,10 @@ public class MqttPublisher {
         } catch (MqttException e) {
             if (e.getReasonCode() != 32202) {
                 e.printStackTrace();
+                System.out.println("Can't send message\n");
+            } else {
+                System.out.println("Too much messages\n");
             }
-            System.out.println("Can't send message\n");
         }
     }
 
