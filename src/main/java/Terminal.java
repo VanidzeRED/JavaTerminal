@@ -9,14 +9,13 @@ public class Terminal {
     static byte PACKAGE_START_LABEL_2 = (byte) 0xBB;
     static int BAUDRATE = 256000;
     static int DATABITS = 8;
-    static int STOPBITS = 1;
+    static int STOPBITS = 1 + 2;
     static int PARITY = 0;
     static int PACKAGE_LENGTH = 18;
 
     public static void main(String[] args) {
         SerialPortFinder.findComPorts();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
-        ComPortListener comPortListener = new ComPortListener();
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
         publisher.setConnection();
@@ -31,9 +30,7 @@ public class Terminal {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            comPortListener.setSerialPort(serialPort);
-            comPortListener.setDataFile(dataFile);
-            comPortListener.setPublisher(publisher);
+            ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
         } catch (SerialPortException e) {
             e.printStackTrace();

@@ -9,18 +9,17 @@ public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
     DataFile dataFile;
     MqttPublisher publisher;
+    ReadingThread readingThread;
     byte[] receivedData;
 
-    public void setSerialPort(SerialPort hSerial) {
-        this.serialPort = hSerial;
-    }
-
-    public void setDataFile(DataFile dataFile) {
+    public ComPortListener(SerialPort serialPort, DataFile dataFile, MqttPublisher publisher) {
+        this.serialPort = serialPort;
         this.dataFile = dataFile;
+        this.publisher = publisher;
     }
 
-    public void setPublisher(MqttPublisher publisher) {
-        this.publisher = publisher;
+    public void setReceivedData(byte[] receivedData) {
+        this.receivedData = receivedData;
     }
 
     public double[] parser(int index, int endian) {
@@ -70,26 +69,22 @@ public class ComPortListener implements SerialPortEventListener {
     }
 
     public void serialEvent(SerialPortEvent event) {
-        receivedData = null;
-        int check;
+        byte check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
                 check = serialPort.readBytes(1)[0];
-                //System.out.println(check);
                 if (check == Terminal.PACKAGE_START_LABEL_1) {
                     check = serialPort.readBytes(1)[0];
                     if (check == Terminal.PACKAGE_START_LABEL_2) {
-                        receivedData = serialPort.readBytes(18);
+                        receivedData = serialPort.readBytes(Terminal.PACKAGE_LENGTH);
                     } else {
                         return;
                     }
                 } else {
                     return;
                 }
-                //receivedData = serialPort.readBytes(18);
-                if (receivedData != null) {
-                    doTerminalOperation();
-                }
+                readingThread = new ReadingThread(dataFile, publisher, receivedData, this, serialPort);
+                readingThread.start();
             } catch (SerialPortException e) {
                 e.printStackTrace();
             }

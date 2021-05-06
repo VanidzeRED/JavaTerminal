@@ -1,51 +1,38 @@
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import jssc.SerialPort;
+import jssc.SerialPortException;
+
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class ReadingThread extends Thread {
-    StringBuilder receivedData = new StringBuilder();
     DataFile dataFile;
     MqttPublisher publisher;
+    ComPortListener comPortListener;
+    SerialPort serialPort;
+    byte[] receivedData;
 
-    public void appendToReceivedData(String receivedData) {
-        this.receivedData.append(receivedData);
-    }
-
-    public String getReceivedData() {
-        return receivedData.toString();
-    }
-
-    public void setDataFile(DataFile dataFile) {
-        this.dataFile = dataFile;
-    }
-
-    public void setPublisher(MqttPublisher publisher) {
+    public ReadingThread(DataFile dataFile, MqttPublisher publisher, byte[] receivedData,
+                         ComPortListener comPortListener, SerialPort serialPort) {
+        this.receivedData = receivedData;
         this.publisher = publisher;
-    }
-
-    public String[] divideData() {
-        int indexAcc = 0;
-        int indexGyr = indexAcc + 6;
-        int indexMag = indexGyr + 6;
-        String receivedData = getReceivedData();
-        String accelerometerData = receivedData.substring(indexAcc, indexGyr);
-        String gyroscopeData = receivedData.substring(indexGyr, indexMag);
-        String magnetometerData = receivedData.substring(indexMag);
-        return new String[]{accelerometerData, gyroscopeData, magnetometerData};
+        this.dataFile = dataFile;
+        this.comPortListener = comPortListener;
+        this.serialPort = serialPort;
     }
 
     public double[] parser(int index, int endian) {
         int j = 0;
-        byte[] message = receivedData.toString().getBytes();
-        byte[] out = new byte[]{message[index], message[index + 1], message[index + 2],
-                message[index + 3], message[index + 4], message[index + 5]};
-        double outDouble[] = new double[message.length / 6];
+        byte[] out = new byte[]{receivedData[index], receivedData[index + 1], receivedData[index + 2],
+                receivedData[index + 3], receivedData[index + 4], receivedData[index + 5]};
+        double[] outDouble = new double[receivedData.length / 6];
         if (endian == 0) {
-            for (int k = 2; k < message.length / 2 - 2; k += 2) {
+            for (int k = 2; k < receivedData.length / 2 - 2; k += 2) {
                 outDouble[j++] = toInt(out[k - 2], out[k - 1]);
             }
         } else if (endian == 1) {
-            for (int k = 2; k < message.length / 2 - 2; k += 2) {
+            for (int k = 2; k < receivedData.length / 2 - 2; k += 2) {
                 outDouble[j++] = toInt(out[k - 1], out[k - 2]);
             }
         } else {
@@ -60,20 +47,27 @@ public class ReadingThread extends Thread {
         return ans;
     }
 
-    public void doThreadOperation() {
-        receivedData.delete(Terminal.PACKAGE_LENGTH, receivedData.length());
+    public void doTerminalOperation() {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
-        //System.out.println("Bytes received: " + receivedData.length() + "\n" + receivedData.toString() + "\n");
-        //System.out.println(Arrays.toString(divideData()));
-        System.out.println("accelerometer: " + Arrays.toString(a) + "\ngyroscope: " + Arrays.toString(g) + "\nmagnetometer: " + Arrays.toString(m) + "\n");
-        dataFile.writeToFile(receivedData.toString());
-        //publisher.sendMessage(receivedData.toString());
+        JsonFile file = new JsonFile(a, g, m);
+        byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
+        dataFile.writeToFile(Arrays.toString(receivedData));
+        dataFile.writeToFile("\n");
+        publisher.sendMessage(jsonFileByteList);
     }
 
     @Override
     public void run() {
-        doThreadOperation();
+        try {
+            serialPort.closePort();
+            doTerminalOperation();
+            //System.out.println(Arrays.toString(receivedData));
+            serialPort.openPort();
+            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
     }
 }
