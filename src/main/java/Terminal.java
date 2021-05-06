@@ -1,5 +1,7 @@
 import jssc.*;
 
+import java.util.Arrays;
+
 public class Terminal {
     static String SERIAL_PORT_NAME = "COM7";
     static String FILE_NAME = "info.txt";
@@ -14,7 +16,6 @@ public class Terminal {
     static int PACKAGE_LENGTH = 18;
 
     public static void main(String[] args) {
-        SerialPortFinder.findComPorts();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
@@ -35,5 +36,7 @@ public class Terminal {
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
+        TimeoutThread timeoutThread = new TimeoutThread();
+        timeoutThread.start();
     }
 }

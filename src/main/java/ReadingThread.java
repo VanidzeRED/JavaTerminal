@@ -1,7 +1,6 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import jssc.SerialPort;
-import jssc.SerialPortException;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -56,17 +55,19 @@ public class ReadingThread extends Thread {
         dataFile.writeToFile(Arrays.toString(receivedData));
         dataFile.writeToFile("\n");
         publisher.sendMessage(jsonFileByteList);
+        System.out.println(Arrays.toString(SerialPortFinder.findComPorts()));
     }
 
     @Override
     public void run() {
-        //try {
-            //serialPort.closePort();
+        /*try {
+            serialPort.closePort();
             doTerminalOperation();
-            //serialPort.openPort();
-            //serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
-        //} catch (SerialPortException e) {
-            //e.printStackTrace();
-        //}
+            serialPort.openPort();
+            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }*/
+        doTerminalOperation();
     }
 }
