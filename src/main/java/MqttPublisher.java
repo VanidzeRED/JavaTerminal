@@ -31,7 +31,9 @@ public class MqttPublisher {
         try {
             client.publish(Terminal.MQTT_TOPIC, message);
         } catch (MqttException e) {
-            e.printStackTrace();
+            if (e.getReasonCode() != 32202) {
+                e.printStackTrace();
+            }
             System.out.println("Can't send message\n");
         }
     }

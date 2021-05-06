@@ -47,7 +47,7 @@ public class ReadingThread extends Thread {
         return ans;
     }
 
-    public void doTerminalOperation() {
+    public synchronized void doTerminalOperation() {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
@@ -60,14 +60,13 @@ public class ReadingThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            serialPort.closePort();
+        //try {
+            //serialPort.closePort();
             doTerminalOperation();
-            //System.out.println(Arrays.toString(receivedData));
-            serialPort.openPort();
-            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
-        } catch (SerialPortException e) {
-            e.printStackTrace();
-        }
+            //serialPort.openPort();
+            //serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
+        //} catch (SerialPortException e) {
+            //e.printStackTrace();
+        //}
     }
 }

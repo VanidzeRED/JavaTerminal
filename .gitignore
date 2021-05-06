@@ -26,6 +26,7 @@ target
 .idea
 .lck
 info.txt
+paho*
 
 !pom.xml
 

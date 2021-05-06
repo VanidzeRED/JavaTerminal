@@ -9,7 +9,7 @@ public class ComPortListener implements SerialPortEventListener {
     SerialPort serialPort;
     DataFile dataFile;
     MqttPublisher publisher;
-    ReadingThread readingThread;
+    //ReadingThread readingThread;
     byte[] receivedData;
 
     public ComPortListener(SerialPort serialPort, DataFile dataFile, MqttPublisher publisher) {
@@ -83,7 +83,7 @@ public class ComPortListener implements SerialPortEventListener {
                 } else {
                     return;
                 }
-                readingThread = new ReadingThread(dataFile, publisher, receivedData, this, serialPort);
+                ReadingThread readingThread = new ReadingThread(dataFile, publisher, receivedData, this, serialPort);
                 readingThread.start();
             } catch (SerialPortException e) {
                 e.printStackTrace();
