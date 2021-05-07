@@ -35,7 +35,7 @@ public class MqttPublisher {
                 e.printStackTrace();
                 System.out.println("Can't send message\n");
             } else {
-                System.out.println("Too much messages!\n");
+                System.out.println("***\n");
             }
         }
     }
