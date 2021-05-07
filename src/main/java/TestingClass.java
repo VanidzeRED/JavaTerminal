@@ -3,12 +3,15 @@ import jssc.SerialPortException;
 
 public class TestingClass {
     public static void main(String[] args) {
+
+        //this class is not using now
+
         /*int a = 170;
         int b = 187;
         int c = 110;
         System.out.println((byte)a);
         System.out.println((byte)b);
-        System.out.println((byte)c);*/
+        System.out.println((byte)c);
         SerialPort serialPort = new SerialPort(Terminal.SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(Terminal.FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
@@ -51,6 +54,6 @@ public class TestingClass {
             }
         } catch (SerialPortException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

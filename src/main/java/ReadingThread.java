@@ -10,15 +10,21 @@ public class ReadingThread extends Thread {
     MqttPublisher publisher;
     ComPortListener comPortListener;
     SerialPort serialPort;
+    TerminalService terminalService;
     byte[] receivedData;
+
+    public ReadingThread (TerminalService terminalService, byte[] receivedData){
+        this.terminalService = terminalService;
+        this.receivedData = receivedData;
+    }
 
     public ReadingThread(DataFile dataFile, MqttPublisher publisher, byte[] receivedData,
                          ComPortListener comPortListener, SerialPort serialPort) {
-        this.receivedData = receivedData;
-        this.publisher = publisher;
-        this.dataFile = dataFile;
-        this.comPortListener = comPortListener;
-        this.serialPort = serialPort;
+            this.receivedData = receivedData;
+            this.publisher = publisher;
+            this.dataFile = dataFile;
+            this.comPortListener = comPortListener;
+            this.serialPort = serialPort;
     }
 
     public double[] parser(int index, int endian) {
@@ -46,27 +52,19 @@ public class ReadingThread extends Thread {
         return ans;
     }
 
-    public synchronized void doTerminalOperation() {
-        double[] a = parser(0, 1);
+    @Override
+    public void run() {
+        /*double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
         JsonFile file = new JsonFile(a, g, m);
         byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
-        dataFile.writeToFile(Arrays.toString(receivedData));
+        dataFile.writeToFile(Arrays.toString(a));
+        dataFile.writeToFile(Arrays.toString(g));
+        dataFile.writeToFile(Arrays.toString(m));
+        //file.getData();
         dataFile.writeToFile("\n");
-        publisher.sendMessage(jsonFileByteList);
-    }
-
-    @Override
-    public void run() {
-        /*try {
-            serialPort.closePort();
-            doTerminalOperation();
-            serialPort.openPort();
-            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
-        } catch (SerialPortException e) {
-            e.printStackTrace();
-        }*/
-        doTerminalOperation();
+        publisher.sendMessage(jsonFileByteList);*/
+        terminalService.doTerminalOperation(receivedData);
     }
 }

@@ -18,8 +18,9 @@ public class Terminal {
     public static void main(String[] args) {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
+        dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         MqttPublisher publisher = new MqttPublisher();
-        TerminalService terminalService = new TerminalService(serialPort, publisher, dataFile);
+        TerminalService terminalService = new TerminalService();
         System.out.println(Arrays.toString(terminalService.findComPorts()));
         publisher.setConnection();
         publisher.subscribe();
@@ -27,7 +28,7 @@ public class Terminal {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
                 Thread.sleep(2000);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
         }
         System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
         System.out.println("Serial port was successfully opened");
@@ -36,7 +37,17 @@ public class Terminal {
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
             ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
+
+            //ComPortListener comPortListener = new ComPortListener();
+            //comPortListener.setSerialPort(serialPort);
+
+            terminalService.setSerialPort(serialPort);
+            terminalService.setDataFile(dataFile);
+            terminalService.setPublisher(publisher);
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
+
+            //comPortListener.setTerminalService(terminalService);
+
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
