@@ -19,13 +19,17 @@ public class Terminal {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
+        TerminalService terminalService = new TerminalService(serialPort, publisher, dataFile);
+        System.out.println(Arrays.toString(terminalService.findComPorts()));
         publisher.setConnection();
         publisher.subscribe();
-        try {
-            serialPort.openPort();
-        } catch (SerialPortException e) {
-            e.printStackTrace();
+        while (!terminalService.openSerialPort(serialPort)) {
+            try {
+                System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {}
         }
+        System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
         System.out.println("Serial port was successfully opened");
         try {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
@@ -36,7 +40,5 @@ public class Terminal {
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
-        TimeoutThread timeoutThread = new TimeoutThread();
-        timeoutThread.start();
     }
 }

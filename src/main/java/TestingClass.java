@@ -9,7 +9,6 @@ public class TestingClass {
         System.out.println((byte)a);
         System.out.println((byte)b);
         System.out.println((byte)c);*/
-        SerialPortFinder.findComPorts();
         SerialPort serialPort = new SerialPort(Terminal.SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(Terminal.FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();

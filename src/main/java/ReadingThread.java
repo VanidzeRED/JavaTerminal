@@ -55,7 +55,6 @@ public class ReadingThread extends Thread {
         dataFile.writeToFile(Arrays.toString(receivedData));
         dataFile.writeToFile("\n");
         publisher.sendMessage(jsonFileByteList);
-        System.out.println(Arrays.toString(SerialPortFinder.findComPorts()));
     }
 
     @Override
