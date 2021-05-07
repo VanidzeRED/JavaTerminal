@@ -4,6 +4,7 @@ import jssc.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.concurrent.Semaphore;
 
 public class ReadingThread extends Thread {
     DataFile dataFile;
@@ -11,6 +12,7 @@ public class ReadingThread extends Thread {
     ComPortListener comPortListener;
     SerialPort serialPort;
     TerminalService terminalService;
+    Semaphore semaphore;
     byte[] receivedData;
 
     public ReadingThread (TerminalService terminalService, byte[] receivedData){
@@ -69,6 +71,14 @@ public class ReadingThread extends Thread {
     @Override
     public void run() {
         //doTerminalOperation();
-        terminalService.doTerminalOperation(receivedData);
+        semaphore = terminalService.getSemaphore();
+        try {
+            semaphore.acquire();
+            terminalService.doTerminalOperation(receivedData);
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -6,12 +6,13 @@ import jssc.SerialPortList;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.concurrent.Semaphore;
 
 public class TerminalService {
-
     SerialPort serialPort;
     MqttPublisher publisher;
     DataFile dataFile;
+    Semaphore semaphore;
     byte[] receivedData;
 
     public void setSerialPort(SerialPort serialPort) {
@@ -28,6 +29,14 @@ public class TerminalService {
 
     public void setReceivedData(byte[] receivedData) {
         this.receivedData = receivedData;
+    }
+
+    public void setSemaphore(Semaphore semaphore) {
+        this.semaphore = semaphore;
+    }
+
+    public Semaphore getSemaphore() {
+        return semaphore;
     }
 
     public void prepareNewPublisher() {
