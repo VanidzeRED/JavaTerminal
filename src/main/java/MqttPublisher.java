@@ -52,4 +52,12 @@ public class MqttPublisher {
             e.printStackTrace();
         }
     }
+
+    public void closeClient() {
+        try {
+            client.disconnect();
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
 }

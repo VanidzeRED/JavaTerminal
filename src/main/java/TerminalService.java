@@ -30,6 +30,11 @@ public class TerminalService {
         this.receivedData = receivedData;
     }
 
+    public void prepareNewPublisher() {
+        publisher = new MqttPublisher();
+        publisher.setConnection();
+    }
+
     public String[] findComPorts() {
         return SerialPortList.getPortNames();
     }
@@ -70,6 +75,7 @@ public class TerminalService {
     }
 
     public void doTerminalOperation(byte[] receivedData) {
+        //prepareNewPublisher();
         setReceivedData(receivedData);
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
