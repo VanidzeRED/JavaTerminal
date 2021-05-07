@@ -52,9 +52,8 @@ public class ReadingThread extends Thread {
         return ans;
     }
 
-    @Override
-    public void run() {
-        /*double[] a = parser(0, 1);
+    public void doTerminalOperation() {
+        double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
         JsonFile file = new JsonFile(a, g, m);
@@ -64,7 +63,12 @@ public class ReadingThread extends Thread {
         dataFile.writeToFile(Arrays.toString(m));
         //file.getData();
         dataFile.writeToFile("\n");
-        publisher.sendMessage(jsonFileByteList);*/
+        publisher.sendMessage(jsonFileByteList);
+    }
+
+    @Override
+    public void run() {
+        //doTerminalOperation();
         terminalService.doTerminalOperation(receivedData);
     }
 }

@@ -36,17 +36,18 @@ public class Terminal {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
 
-            //ComPortListener comPortListener = new ComPortListener();
-            //comPortListener.setSerialPort(serialPort);
+            //ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
+
+            ComPortListener comPortListener = new ComPortListener();
+            comPortListener.setSerialPort(serialPort);
 
             terminalService.setSerialPort(serialPort);
             terminalService.setDataFile(dataFile);
             terminalService.setPublisher(publisher);
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
 
-            //comPortListener.setTerminalService(terminalService);
+            comPortListener.setTerminalService(terminalService);
 
         } catch (SerialPortException e) {
             e.printStackTrace();
