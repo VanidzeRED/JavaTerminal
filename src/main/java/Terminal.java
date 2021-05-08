@@ -1,5 +1,7 @@
 import jssc.*;
+import ui.Index;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
@@ -36,6 +38,7 @@ public class Terminal {
     }
 
     public static void main(String[] args) {
+        JFrame index = new Index();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
