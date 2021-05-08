@@ -1,9 +1,5 @@
-package processing;
-
 import com.alibaba.fastjson.JSON;
-import files.JsonFile;
 import org.eclipse.paho.client.mqttv3.*;
-import main.Terminal;
 
 public class MqttPublisher {
     MqttClient client;
