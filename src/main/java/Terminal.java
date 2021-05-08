@@ -16,6 +16,27 @@ public class Terminal {
     static int PARITY = 0;
     static int PACKAGE_LENGTH = 18;
     static int THREAD_COUNT = 8;
+<<<<<<< HEAD:src/main/java/Terminal.java
+=======
+
+    public static void reconnect(SerialPort serialPort) {
+        TerminalService newService = new TerminalService();
+        try {
+            serialPort.closePort();
+            serialPort = new SerialPort(SERIAL_PORT_NAME);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
+        while (!newService.openSerialPort(serialPort)) {
+            try {
+                System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+>>>>>>> parent of f2a9dba (GUI beginning):src/main/java/main/Terminal.java
 
     public static void main(String[] args) {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
