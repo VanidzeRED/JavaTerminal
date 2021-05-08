@@ -16,8 +16,6 @@ public class Terminal {
     static int PARITY = 0;
     static int PACKAGE_LENGTH = 18;
     static int THREAD_COUNT = 8;
-<<<<<<< HEAD:src/main/java/Terminal.java
-=======
 
     public static void reconnect(SerialPort serialPort) {
         TerminalService newService = new TerminalService();
@@ -36,7 +34,6 @@ public class Terminal {
             }
         }
     }
->>>>>>> parent of f2a9dba (GUI beginning):src/main/java/main/Terminal.java
 
     public static void main(String[] args) {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
