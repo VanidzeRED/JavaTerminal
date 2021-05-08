@@ -21,9 +21,11 @@ public class ComPortListener implements SerialPortEventListener {
 
     public void setTerminalService(TerminalService terminalService) {
         this.terminalService = terminalService;
+        terminalService.resetTimer();
     }
 
     public void serialEvent(SerialPortEvent event) {
+        terminalService.resetTimer();
         byte check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
@@ -38,8 +40,6 @@ public class ComPortListener implements SerialPortEventListener {
                 } else {
                     return;
                 }
-                //ReadingThread readingThread = new ReadingThread(dataFile, publisher, receivedData, this, serialPort);
-
                 ReadingThread readingThread = new ReadingThread(terminalService, receivedData);
                 readingThread.start();
             } catch (SerialPortException e) {

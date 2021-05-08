@@ -14,6 +14,7 @@ public class TerminalService {
     DataFile dataFile;
     Semaphore semaphore;
     byte[] receivedData;
+    long timer;
 
     public void setSerialPort(SerialPort serialPort) {
         this.serialPort = serialPort;
@@ -84,7 +85,6 @@ public class TerminalService {
     }
 
     public void doTerminalOperation(byte[] receivedData) {
-        //prepareNewPublisher();
         setReceivedData(receivedData);
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
@@ -96,8 +96,22 @@ public class TerminalService {
         dataFile.writeToFile(Arrays.toString(m));
         file.getData();
         dataFile.writeToFile("\n");
-
         SendingThread sendingThread = new SendingThread(semaphore, publisher, jsonFileByteList);
         sendingThread.start();
+    }
+
+    public void resetTimer() {
+        timer = 1000;
+    }
+
+    public void startTimer(SerialPort serialPort) {
+        while (timer > 0) {
+            try {
+                timer--;
+                Thread.sleep(1);
+            } catch (InterruptedException ignored) {}
+        }
+        System.out.println("Serial port reconnection occurred :(");
+        //Terminal.reconnect(serialPort);
     }
 }

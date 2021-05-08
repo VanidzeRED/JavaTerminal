@@ -17,20 +17,41 @@ public class Terminal {
     static int PACKAGE_LENGTH = 18;
     static int THREAD_COUNT = 8;
 
+    public static void reconnect(SerialPort serialPort) {
+        TerminalService newService = new TerminalService();
+        try {
+            serialPort.closePort();
+            serialPort = new SerialPort(SERIAL_PORT_NAME);
+        } catch (SerialPortException e) {
+            e.printStackTrace();
+        }
+        while (!newService.openSerialPort(serialPort)) {
+            try {
+                System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     public static void main(String[] args) {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
         TerminalService terminalService = new TerminalService();
+        ComPortListener comPortListener = new ComPortListener();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         System.out.println(Arrays.toString(terminalService.findComPorts()));
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
+
         //publisher.subscribe();
+
         while (!terminalService.openSerialPort(serialPort)) {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException ignored) {}
         }
         System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
@@ -39,21 +60,16 @@ public class Terminal {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
-
-            //ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
-
-            ComPortListener comPortListener = new ComPortListener();
             comPortListener.setSerialPort(serialPort);
-
             terminalService.setSerialPort(serialPort);
             terminalService.setDataFile(dataFile);
             terminalService.setPublisher(publisher);
             terminalService.setSemaphore(semaphore);
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
-
             comPortListener.setTerminalService(terminalService);
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
+        terminalService.startTimer(serialPort);
     }
 }
