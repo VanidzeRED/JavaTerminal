@@ -71,6 +71,8 @@ public class ReadingThread extends Thread {
     @Override
     public void run() {
         //doTerminalOperation();
+        terminalService.doTerminalOperation(receivedData);
+        /*
         semaphore = terminalService.getSemaphore();
         try {
             semaphore.acquire();
@@ -79,6 +81,6 @@ public class ReadingThread extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        */
     }
 }

@@ -94,8 +94,10 @@ public class TerminalService {
         dataFile.writeToFile(Arrays.toString(a));
         dataFile.writeToFile(Arrays.toString(g));
         dataFile.writeToFile(Arrays.toString(m));
-        //file.getData();
+        file.getData();
         dataFile.writeToFile("\n");
-        publisher.sendMessage(jsonFileByteList);
+
+        SendingThread sendingThread = new SendingThread(semaphore, publisher, jsonFileByteList);
+        sendingThread.start();
     }
 }

@@ -26,7 +26,7 @@ public class Terminal {
         System.out.println(Arrays.toString(terminalService.findComPorts()));
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
-        publisher.subscribe();
+        //publisher.subscribe();
         while (!terminalService.openSerialPort(serialPort)) {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
