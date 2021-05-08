@@ -1,6 +1,10 @@
+package threads;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import jssc.SerialPort;
+import files.*;
+import processing.*;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

@@ -1,4 +1,9 @@
+package processing;
+
+import files.DataFile;
 import jssc.*;
+import threads.ReadingThread;
+import main.Terminal;
 
 public class ComPortListener implements SerialPortEventListener {
     DataFile dataFile;

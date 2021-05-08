@@ -1,4 +1,7 @@
+package threads;
+
 import java.util.concurrent.Semaphore;
+import processing.MqttPublisher;
 
 public class SendingThread extends Thread{
     MqttPublisher publisher;

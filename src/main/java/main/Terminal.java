@@ -1,21 +1,31 @@
-import jssc.*;
+package main;
 
+import files.DataFile;
+import jssc.*;
+import processing.ComPortListener;
+import processing.MqttPublisher;
+import processing.TerminalService;
+import ui.Index;
+
+import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class Terminal {
-    static String SERIAL_PORT_NAME = "COM7";
-    static String FILE_NAME = "info.txt";
-    static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
-    static String MQTT_TOPIC = "Received data";
-    static byte PACKAGE_START_LABEL_1 = (byte) 0xAA;
-    static byte PACKAGE_START_LABEL_2 = (byte) 0xBB;
-    static int BAUDRATE = 256000;
-    static int DATABITS = 8;
-    static int STOPBITS = 1 + 2;
-    static int PARITY = 0;
-    static int PACKAGE_LENGTH = 18;
-    static int THREAD_COUNT = 8;
+    public static String SERIAL_PORT_NAME = "COM7";
+    public static String FILE_NAME = "info.txt";
+    public static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
+    public static String MQTT_TOPIC = "Received data";
+    public static byte PACKAGE_START_LABEL_1 = (byte) 0xAA;
+    public static byte PACKAGE_START_LABEL_2 = (byte) 0xBB;
+    public static int BAUDRATE = 256000;
+    public static int DATABITS = 8;
+    public static int STOPBITS = 1 + 2;
+    public static int PARITY = 0;
+    public static int PACKAGE_LENGTH = 18;
+    public static int THREAD_COUNT = 8;
 
     public static void reconnect(SerialPort serialPort) {
         TerminalService newService = new TerminalService();
@@ -36,6 +46,7 @@ public class Terminal {
     }
 
     public static void main(String[] args) {
+        JFrame index = new Index();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();

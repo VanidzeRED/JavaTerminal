@@ -1,3 +1,5 @@
+package files;
+
 import java.util.Arrays;
 
 public class JsonFile {
