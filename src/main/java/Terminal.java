@@ -1,5 +1,4 @@
 import jssc.*;
-import ui.Index;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -48,12 +47,12 @@ public class Terminal {
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
         //publisher.subscribe();
-        while (!terminalService.openSerialPort(serialPort)) {
+        /*while (!terminalService.openSerialPort(serialPort)) {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
                 Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
-        }
+        }*/
         System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
         System.out.println("Serial port was successfully opened");
         try {
