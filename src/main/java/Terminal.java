@@ -8,6 +8,9 @@ public class Terminal {
     static String SERIAL_PORT_NAME = "COM7";
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
+
+    //current address: tcp://62.77.153.231:1883
+
     static String MQTT_TOPIC = "Received data";
     static byte PACKAGE_START_LABEL_1 = (byte) 0xAA;
     static byte PACKAGE_START_LABEL_2 = (byte) 0xBB;
@@ -37,7 +40,7 @@ public class Terminal {
     }
 
     public static void main(String[] args) {
-        JFrame index = new Index();
+        //JFrame index = new Index();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
         MqttPublisher publisher = new MqttPublisher();
@@ -47,12 +50,12 @@ public class Terminal {
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
         //publisher.subscribe();
-        /*while (!terminalService.openSerialPort(serialPort)) {
+        while (!terminalService.openSerialPort(serialPort)) {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
                 Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
-        }*/
+        }
         System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
         System.out.println("Serial port was successfully opened");
         try {

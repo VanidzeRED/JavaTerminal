@@ -120,8 +120,60 @@ public class Index extends JFrame {
             System.out.println(Terminal.PACKAGE_LENGTH);
         });
 
+        JLabel label2 = new JLabel("MQTT settings");
+        label2.setFont(new Font(null, Font.BOLD, 14));
+        label2.setBounds(230, 10, 200, 30);
+
+        JLabel addressLabel = new JLabel("Server address");
+        addressLabel.setBounds(230, 40, 200, 30);
+
+        JTextField addressField = new JTextField(24);
+        addressField.setText("enter address here");
+        addressField.setBounds(230, 70, 200, 30);
+        addressField.addActionListener(e -> {
+            Terminal.SERVER_ADDRESS = addressField.getText();
+            System.out.println(Terminal.SERVER_ADDRESS);
+        });
+
+        JLabel topicLabel = new JLabel("Message topic");
+        topicLabel.setBounds(230, 100, 200, 30);
+
+        JTextField topicField = new JTextField(24);
+        topicField.setText("Received data");
+        topicField.setBounds(230, 130, 200, 30);
+        topicField.addActionListener(e -> {
+            Terminal.MQTT_TOPIC = topicField.getText();
+            System.out.println(Terminal.MQTT_TOPIC);
+        });
+
+        JLabel label3 = new JLabel("Other settings");
+        label3.setFont(new Font(null, Font.BOLD, 14));
+        label3.setBounds(450, 10, 200, 30);
+
+        JLabel filenameLabel = new JLabel("Reserve data file");
+        filenameLabel.setBounds(450, 40, 200, 30);
+
+        JTextField filenameField = new JTextField(24);
+        filenameField.setText("info.txt");
+        filenameField.setBounds(450, 70, 200, 30);
+        filenameField.addActionListener(e -> {
+            Terminal.FILE_NAME = filenameField.getText();
+            System.out.println(Terminal.FILE_NAME);
+        });
+
+        JLabel threadLabel = new JLabel("Count of sending threads");
+        threadLabel.setBounds(450, 100, 200, 30);
+
+        JTextField threadField = new JTextField(24);
+        threadField.setText("8 (optimal)");
+        threadField.setBounds(450, 130, 200, 30);
+        threadField.addActionListener(e -> {
+            Terminal.THREAD_COUNT = Integer.parseInt(threadField.getText());
+            System.out.println(Terminal.THREAD_COUNT);
+        });
+
         JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(380, 250, buttonWidth, buttonHeight);
+        exitButton.setBounds(480, 250, buttonWidth, buttonHeight);
         exitButton.addActionListener(e -> System.exit(0));
 
         panel.add(exitButton);
@@ -138,6 +190,16 @@ public class Index extends JFrame {
         panel.add(stopbitsComboBox);
         panel.add(parityComboBox);
         panel.add(lengthField);
+        panel.add(label2);
+        panel.add(addressLabel);
+        panel.add(addressField);
+        panel.add(topicLabel);
+        panel.add(topicField);
+        panel.add(label3);
+        panel.add(filenameLabel);
+        panel.add(filenameField);
+        panel.add(threadLabel);
+        panel.add(threadField);
         this.getContentPane().add(panel);
         this.setVisible(true);
     }
