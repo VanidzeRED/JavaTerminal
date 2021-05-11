@@ -35,9 +35,9 @@ public class JsonFile {
         this.magnetometer = magnetometer;
     }
 
-    public void getData() {
-        System.out.println("accelerometer: " + Arrays.toString(accelerometer) +
+    public String getData() {
+        return "accelerometer: " + Arrays.toString(accelerometer) +
                 "\ngyroscope: " + Arrays.toString(gyroscope) +
-                "\nmagnetometer: " + Arrays.toString(magnetometer) + "\n");
+                "\nmagnetometer: " + Arrays.toString(magnetometer) + "\n";
     }
 }

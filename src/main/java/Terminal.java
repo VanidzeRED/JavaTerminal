@@ -40,19 +40,20 @@ public class Terminal {
     }
 
     public static void main(String[] args) {
-        //JFrame index = new Index();
+        Index index = new Index();
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
-        MqttPublisher publisher = new MqttPublisher();
+        MqttPublisher publisher = new MqttPublisher(index);
         TerminalService terminalService = new TerminalService();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
+        terminalService.setIndex(index);
         System.out.println(Arrays.toString(terminalService.findComPorts()));
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
-        //publisher.subscribe();
+        publisher.subscribe();
         while (!terminalService.openSerialPort(serialPort)) {
             try {
-                System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
+                //System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
                 Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
         }

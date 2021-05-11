@@ -4,8 +4,9 @@ import org.eclipse.paho.client.mqttv3.*;
 public class MqttPublisher {
     MqttClient client;
     MqttMessage message;
+    Index index;
 
-    public MqttPublisher() {
+    public MqttPublisher(Index index) {
         this.message = new MqttMessage();
         try {
             this.client = new MqttClient(Terminal.SERVER_ADDRESS, MqttClient.generateClientId());
@@ -44,8 +45,8 @@ public class MqttPublisher {
         try {
             IMqttMessageListener messageListener = (topic, message) -> {
                 JsonFile newFile = JSON.parseObject(String.valueOf(message), JsonFile.class);
-                System.out.println("Message from server:");
-                newFile.getData();
+                //System.out.println("Message from server:");
+                index.setServerAreaText(newFile.getData());
             };
             client.subscribe(Terminal.MQTT_TOPIC, messageListener);
         } catch (MqttException e) {

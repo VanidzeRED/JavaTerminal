@@ -6,11 +6,26 @@ import java.awt.*;
 public class Index extends JFrame {
     static int buttonWidth = 100;
     static int buttonHeight = 30;
+    JTextArea errorArea;
+    JTextArea receivedArea;
+    JTextArea serverArea;
+
+    public void setErrorText(String message) {
+        errorArea.setText(message);
+    }
+
+    public void setReceivedAreaText(String receivedData) {
+        receivedArea.setText(receivedData);
+    }
+
+    public void setServerAreaText(String message) {
+        serverArea.setText(message);
+    }
 
     public Index () {
         super("Terminal for receiving data");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(800, 600);
+        this.setSize(680, 900);
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
@@ -148,32 +163,58 @@ public class Index extends JFrame {
 
         JLabel label3 = new JLabel("Other settings");
         label3.setFont(new Font(null, Font.BOLD, 14));
-        label3.setBounds(450, 10, 200, 30);
+        label3.setBounds(230, 160, 200, 30);
 
         JLabel filenameLabel = new JLabel("Reserve data file");
-        filenameLabel.setBounds(450, 40, 200, 30);
+        filenameLabel.setBounds(230, 190, 200, 30);
 
         JTextField filenameField = new JTextField(24);
         filenameField.setText("info.txt");
-        filenameField.setBounds(450, 70, 200, 30);
+        filenameField.setBounds(230, 220, 200, 30);
         filenameField.addActionListener(e -> {
             Terminal.FILE_NAME = filenameField.getText();
             System.out.println(Terminal.FILE_NAME);
         });
 
         JLabel threadLabel = new JLabel("Count of sending threads");
-        threadLabel.setBounds(450, 100, 200, 30);
+        threadLabel.setBounds(230, 250, 200, 30);
 
         JTextField threadField = new JTextField(24);
         threadField.setText("8 (optimal)");
-        threadField.setBounds(450, 130, 200, 30);
+        threadField.setBounds(230, 280, 200, 30);
         threadField.addActionListener(e -> {
             Terminal.THREAD_COUNT = Integer.parseInt(threadField.getText());
             System.out.println(Terminal.THREAD_COUNT);
         });
 
+        errorArea = new JTextArea("Occurred errors");
+        errorArea.setBounds(230, 320, 200, 80);
+        errorArea.setEditable(false);
+        errorArea.setLineWrap(true);
+        errorArea.setWrapStyleWord(true);
+
+        JLabel label4 = new JLabel("Received data");
+        label4.setFont(new Font(null, Font.BOLD, 14));
+        label4.setBounds(10, 400, 420, 30);
+
+        receivedArea = new JTextArea();
+        receivedArea.setBounds(10, 430, 420, 50);
+        receivedArea.setEditable(false);
+        receivedArea.setLineWrap(true);
+        receivedArea.setText("accelerometer:\ngyroscope:\nmagnetometer:");
+
+        JLabel label5 = new JLabel("Data returned from the server");
+        label5.setFont(new Font(null, Font.BOLD, 14));
+        label5.setBounds(10, 490, 420, 30);
+
+        serverArea = new JTextArea();
+        serverArea.setBounds(10, 520, 420, 50);
+        serverArea.setEditable(false);
+        serverArea.setLineWrap(true);
+        serverArea.setText("accelerometer:\ngyroscope:\nmagnetometer:");
+
         JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(480, 250, buttonWidth, buttonHeight);
+        exitButton.setBounds(550, 370, buttonWidth, buttonHeight);
         exitButton.addActionListener(e -> System.exit(0));
 
         panel.add(exitButton);
@@ -200,6 +241,11 @@ public class Index extends JFrame {
         panel.add(filenameField);
         panel.add(threadLabel);
         panel.add(threadField);
+        panel.add(errorArea);
+        panel.add(label4);
+        panel.add(receivedArea);
+        panel.add(label5);
+        panel.add(serverArea);
         this.getContentPane().add(panel);
         this.setVisible(true);
     }

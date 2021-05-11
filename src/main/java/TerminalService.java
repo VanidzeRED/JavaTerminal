@@ -4,6 +4,7 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
+import javax.swing.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
@@ -14,6 +15,7 @@ public class TerminalService {
     DataFile dataFile;
     Semaphore semaphore;
     byte[] receivedData;
+    Index index;
 
     public void setSerialPort(SerialPort serialPort) {
         this.serialPort = serialPort;
@@ -35,12 +37,16 @@ public class TerminalService {
         this.semaphore = semaphore;
     }
 
+    public void setIndex(Index index) {
+        this.index = index;
+    }
+
     public Semaphore getSemaphore() {
         return semaphore;
     }
 
     public void prepareNewPublisher() {
-        publisher = new MqttPublisher();
+        publisher = new MqttPublisher(index);
         publisher.setConnection();
     }
 
@@ -53,7 +59,7 @@ public class TerminalService {
             serialPort.openPort();
             return true;
         } catch (SerialPortException e) {
-            System.out.println(e.getMessage());
+            index.setErrorText(e.getMessage());
             return false;
         }
     }
@@ -94,9 +100,8 @@ public class TerminalService {
         dataFile.writeToFile(Arrays.toString(a));
         dataFile.writeToFile(Arrays.toString(g));
         dataFile.writeToFile(Arrays.toString(m));
-        file.getData();
         dataFile.writeToFile("\n");
-
+        index.setReceivedAreaText(file.getData());
         SendingThread sendingThread = new SendingThread(semaphore, publisher, jsonFileByteList);
         sendingThread.start();
     }
