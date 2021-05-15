@@ -21,7 +21,7 @@ public class DataFile {
             fileWriter = new FileWriter(fileName, false);
             fileReader = new FileReader(fileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
     }
 
@@ -31,7 +31,7 @@ public class DataFile {
             fileWriter.flush();
             setStrLen(string.length());
         } catch (IOException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
     }
 
@@ -44,7 +44,7 @@ public class DataFile {
                 stringBuilder.append(currentByte);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
         return stringBuilder.toString();
     }

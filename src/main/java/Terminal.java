@@ -1,6 +1,5 @@
 import jssc.*;
 
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
@@ -8,6 +7,7 @@ public class Terminal {
     static String SERIAL_PORT_NAME = "COM7";
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
+    static Index index;
 
     //current address: tcp://62.77.153.231:1883
 
@@ -21,39 +21,20 @@ public class Terminal {
     static int PACKAGE_LENGTH = 18;
     static int THREAD_COUNT = 8;
 
-    public static void reconnect(SerialPort serialPort) {
-        TerminalService newService = new TerminalService();
-        try {
-            serialPort.closePort();
-            serialPort = new SerialPort(SERIAL_PORT_NAME);
-        } catch (SerialPortException e) {
-            e.printStackTrace();
-        }
-        while (!newService.openSerialPort(serialPort)) {
-            try {
-                System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        Index index = new Index();
+    public static void start() {
         SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
         DataFile dataFile = new DataFile(FILE_NAME);
-        MqttPublisher publisher = new MqttPublisher(index);
+        MqttPublisher publisher = new MqttPublisher();
         TerminalService terminalService = new TerminalService();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         terminalService.setIndex(index);
-        System.out.println(Arrays.toString(terminalService.findComPorts()));
+        System.out.println(Arrays.toString(TerminalService.findComPorts()));
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
         publisher.subscribe();
         while (!terminalService.openSerialPort(serialPort)) {
             try {
-                //System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
+                Index.setNewsAreaText(Arrays.toString(TerminalService.findComPorts()));
                 Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
         }
@@ -77,7 +58,29 @@ public class Terminal {
 
             comPortListener.setTerminalService(terminalService);
         } catch (SerialPortException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
+    }
+
+    public static void reconnect(SerialPort serialPort) {
+        TerminalService newService = new TerminalService();
+        try {
+            serialPort.closePort();
+            serialPort = new SerialPort(SERIAL_PORT_NAME);
+        } catch (SerialPortException e) {
+            Index.setNewsAreaText(e.getMessage());
+        }
+        while (!newService.openSerialPort(serialPort)) {
+            try {
+                System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Index.setNewsAreaText(e.getMessage());
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        index = new Index();
     }
 }

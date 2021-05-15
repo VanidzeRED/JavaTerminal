@@ -4,7 +4,6 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
-import javax.swing.*;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
@@ -46,11 +45,11 @@ public class TerminalService {
     }
 
     public void prepareNewPublisher() {
-        publisher = new MqttPublisher(index);
+        publisher = new MqttPublisher();
         publisher.setConnection();
     }
 
-    public String[] findComPorts() {
+    public static String[] findComPorts() {
         return SerialPortList.getPortNames();
     }
 
@@ -59,7 +58,7 @@ public class TerminalService {
             serialPort.openPort();
             return true;
         } catch (SerialPortException e) {
-            index.setErrorText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage());
             return false;
         }
     }

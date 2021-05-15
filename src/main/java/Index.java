@@ -2,30 +2,31 @@ import jssc.SerialPort;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class Index extends JFrame {
-    static int buttonWidth = 100;
+    static int buttonWidth = 130;
     static int buttonHeight = 30;
-    JTextArea errorArea;
-    JTextArea receivedArea;
-    JTextArea serverArea;
+    static JTextArea newsArea;
+    static JTextArea receivedArea;
+    static JTextArea serverArea;
 
-    public void setErrorText(String message) {
-        errorArea.setText(message);
+    public static void setNewsAreaText(String message) {
+        newsArea.setText(message);
     }
 
-    public void setReceivedAreaText(String receivedData) {
+    public static void setReceivedAreaText(String receivedData) {
         receivedArea.setText(receivedData);
     }
 
-    public void setServerAreaText(String message) {
+    public static void setServerAreaText(String message) {
         serverArea.setText(message);
     }
 
     public Index () {
         super("Terminal for receiving data");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(680, 900);
+        this.setSize(470, 670);
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
@@ -187,11 +188,11 @@ public class Index extends JFrame {
             System.out.println(Terminal.THREAD_COUNT);
         });
 
-        errorArea = new JTextArea("Occurred errors");
-        errorArea.setBounds(230, 320, 200, 80);
-        errorArea.setEditable(false);
-        errorArea.setLineWrap(true);
-        errorArea.setWrapStyleWord(true);
+        newsArea = new JTextArea("News of terminal working process");
+        newsArea.setBounds(230, 320, 200, 80);
+        newsArea.setEditable(false);
+        newsArea.setLineWrap(true);
+        newsArea.setWrapStyleWord(true);
 
         JLabel label4 = new JLabel("Received data");
         label4.setFont(new Font(null, Font.BOLD, 14));
@@ -213,10 +214,21 @@ public class Index extends JFrame {
         serverArea.setLineWrap(true);
         serverArea.setText("accelerometer:\ngyroscope:\nmagnetometer:");
 
+        JButton startButton = new JButton("Start terminal");
+        startButton.setBounds(10, 580, buttonWidth, buttonHeight);
+        startButton.addActionListener(e -> Terminal.start());
+
+        JButton checkButton = new JButton("Check COM's");
+        checkButton.setBounds(150, 580, buttonWidth, buttonHeight);
+        checkButton.addActionListener(e -> newsArea.setText("Available serial ports: " +
+                Arrays.toString(TerminalService.findComPorts())));
+
         JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(550, 370, buttonWidth, buttonHeight);
+        exitButton.setBounds(290, 580, buttonWidth, buttonHeight);
         exitButton.addActionListener(e -> System.exit(0));
 
+        panel.add(startButton);
+        panel.add(checkButton);
         panel.add(exitButton);
         panel.add(label1);
         panel.add(portnameLabel);
@@ -241,7 +253,7 @@ public class Index extends JFrame {
         panel.add(filenameField);
         panel.add(threadLabel);
         panel.add(threadField);
-        panel.add(errorArea);
+        panel.add(newsArea);
         panel.add(label4);
         panel.add(receivedArea);
         panel.add(label5);

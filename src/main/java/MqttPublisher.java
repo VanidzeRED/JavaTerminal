@@ -4,16 +4,14 @@ import org.eclipse.paho.client.mqttv3.*;
 public class MqttPublisher {
     MqttClient client;
     MqttMessage message;
-    Index index;
 
-    public MqttPublisher(Index index) {
+    public MqttPublisher() {
         this.message = new MqttMessage();
         try {
             this.client = new MqttClient(Terminal.SERVER_ADDRESS, MqttClient.generateClientId());
             System.out.println("Client created\n");
         } catch (MqttException e) {
-            e.printStackTrace();
-            System.out.println("Can't create client\n");
+            Index.setNewsAreaText(e.getMessage() + "Can't create client");
         }
     }
 
@@ -22,8 +20,7 @@ public class MqttPublisher {
             this.client.connect();
             System.out.println("Connected to host\n");
         } catch (MqttException e) {
-            e.printStackTrace();
-            System.out.println("Can't connect to host\n");
+            Index.setNewsAreaText(e.getMessage() + "Can't connect to host");
         }
     }
 
@@ -32,12 +29,8 @@ public class MqttPublisher {
         try {
             client.publish(Terminal.MQTT_TOPIC, message);
         } catch (MqttException e) {
-            if (e.getReasonCode() != 32202) {
-                e.printStackTrace();
-                System.out.println("Can't send message\n");
-            } else {
-                System.out.println("***\n");
-            }
+            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage() + "Can't send message");
         }
     }
 
@@ -46,11 +39,11 @@ public class MqttPublisher {
             IMqttMessageListener messageListener = (topic, message) -> {
                 JsonFile newFile = JSON.parseObject(String.valueOf(message), JsonFile.class);
                 //System.out.println("Message from server:");
-                index.setServerAreaText(newFile.getData());
+                Index.setServerAreaText(newFile.getData());
             };
             client.subscribe(Terminal.MQTT_TOPIC, messageListener);
         } catch (MqttException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
     }
 
@@ -58,7 +51,7 @@ public class MqttPublisher {
         try {
             client.disconnect();
         } catch (MqttException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
     }
 }

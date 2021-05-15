@@ -43,7 +43,7 @@ public class ComPortListener implements SerialPortEventListener {
                 ReadingThread readingThread = new ReadingThread(terminalService, receivedData);
                 readingThread.start();
             } catch (SerialPortException e) {
-                e.printStackTrace();
+                Index.setNewsAreaText(e.getMessage());
             }
         }
     }

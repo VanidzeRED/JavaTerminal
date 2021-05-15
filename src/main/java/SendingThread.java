@@ -18,7 +18,7 @@ public class SendingThread extends Thread{
             publisher.sendMessage(jsonFileByteList);
             semaphore.release();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Index.setNewsAreaText(e.getMessage());
         }
     }
 }
