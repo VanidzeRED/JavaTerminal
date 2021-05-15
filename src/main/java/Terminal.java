@@ -45,8 +45,6 @@ public class Terminal {
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
                     SerialPort.FLOWCONTROL_RTSCTS_OUT);
 
-            //ComPortListener comPortListener = new ComPortListener(serialPort, dataFile, publisher);
-
             ComPortListener comPortListener = new ComPortListener();
             comPortListener.setSerialPort(serialPort);
 

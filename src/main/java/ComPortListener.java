@@ -27,7 +27,7 @@ public class ComPortListener implements SerialPortEventListener {
         byte check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {
-                check = serialPort.readBytes(1)[0];
+                /*check = serialPort.readBytes(1)[0];
                 if (check == Terminal.PACKAGE_START_LABEL_1) {
                     check = serialPort.readBytes(1)[0];
                     if (check == Terminal.PACKAGE_START_LABEL_2) {
@@ -37,8 +37,9 @@ public class ComPortListener implements SerialPortEventListener {
                     }
                 } else {
                     return;
-                }
+                }*/
                 //ReadingThread readingThread = new ReadingThread(dataFile, publisher, receivedData, this, serialPort);
+                receivedData = serialPort.readBytes(Terminal.PACKAGE_LENGTH);
 
                 ReadingThread readingThread = new ReadingThread(terminalService, receivedData);
                 readingThread.start();
