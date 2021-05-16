@@ -188,6 +188,19 @@ public class Index extends JFrame {
             System.out.println(Terminal.THREAD_COUNT);
         });
 
+        JLabel fileTypeLabel = new JLabel("Type of sending files");
+        fileTypeLabel.setBounds(230, 310, 200, 30);
+
+        FileTypes[] fileTypesArray = {FileTypes.JSON, FileTypes.XML, FileTypes.ProtocolBuffers};
+
+        JComboBox<FileTypes> fileTypesComboBox = new JComboBox<>(fileTypesArray);
+        fileTypesComboBox.setBounds(230, 340, 200, 30);
+        fileTypesComboBox.setSelectedIndex(0);
+        fileTypesComboBox.addActionListener(e -> {
+            Terminal.fileType = fileTypesArray[fileTypesComboBox.getSelectedIndex()];
+            System.out.println(Terminal.fileType);
+        });
+
         newsArea = new JTextArea("News of terminal working process");
         newsArea.setBounds(230, 320, 200, 80);
         newsArea.setEditable(false);
@@ -253,11 +266,13 @@ public class Index extends JFrame {
         panel.add(filenameField);
         panel.add(threadLabel);
         panel.add(threadField);
-        panel.add(newsArea);
+        //panel.add(newsArea);
         panel.add(label4);
         panel.add(receivedArea);
         panel.add(label5);
         panel.add(serverArea);
+        panel.add(fileTypeLabel);
+        panel.add(fileTypesComboBox);
         this.getContentPane().add(panel);
         this.setVisible(true);
     }

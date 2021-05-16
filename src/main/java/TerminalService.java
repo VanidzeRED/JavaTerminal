@@ -4,6 +4,10 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
@@ -58,7 +62,7 @@ public class TerminalService {
             serialPort.openPort();
             return true;
         } catch (SerialPortException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
             return false;
         }
     }
@@ -94,14 +98,30 @@ public class TerminalService {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
-        JsonFile file = new JsonFile(a, g, m);
-        byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
+        SendingFile file = new SendingFile(a, g, m);
+        byte[] sendingFileByteList = {};
+        if (Terminal.fileType == FileTypes.JSON) {
+            sendingFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
+        }
+        if (Terminal.fileType == FileTypes.XML) {
+            try {
+                StringWriter fileWriter = new StringWriter();
+                JAXBContext context = JAXBContext.newInstance(SendingFile.class);
+                Marshaller marshaller = context.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                marshaller.marshal(file, fileWriter);
+                sendingFileByteList = fileWriter.toString().getBytes();
+            } catch (JAXBException ignored) {}
+        }
+        if (Terminal.fileType == FileTypes.ProtocolBuffers) {
+            file = null;
+        }
         dataFile.writeToFile(Arrays.toString(a));
         dataFile.writeToFile(Arrays.toString(g));
         dataFile.writeToFile(Arrays.toString(m));
         dataFile.writeToFile("\n");
         index.setReceivedAreaText(file.getData());
-        SendingThread sendingThread = new SendingThread(semaphore, publisher, jsonFileByteList);
+        SendingThread sendingThread = new SendingThread(semaphore, publisher, sendingFileByteList);
         sendingThread.start();
     }
 }

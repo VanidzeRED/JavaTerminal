@@ -21,7 +21,7 @@ public class DataFile {
             fileWriter = new FileWriter(fileName, false);
             fileReader = new FileReader(fileName);
         } catch (IOException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
         }
     }
 
@@ -31,7 +31,7 @@ public class DataFile {
             fileWriter.flush();
             setStrLen(string.length());
         } catch (IOException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
         }
     }
 
@@ -44,7 +44,7 @@ public class DataFile {
                 stringBuilder.append(currentByte);
             }
         } catch (IOException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
         }
         return stringBuilder.toString();
     }

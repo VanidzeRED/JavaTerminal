@@ -8,6 +8,7 @@ public class Terminal {
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
     static Index index;
+    static FileTypes fileType = FileTypes.JSON;
 
     //current address: tcp://62.77.153.231:1883
 
@@ -28,7 +29,6 @@ public class Terminal {
         TerminalService terminalService = new TerminalService();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         terminalService.setIndex(index);
-        System.out.println(Arrays.toString(TerminalService.findComPorts()));
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
         publisher.subscribe();
@@ -38,8 +38,7 @@ public class Terminal {
                 Thread.sleep(2000);
             } catch (InterruptedException ignored) {}
         }
-        System.out.println("Available serial ports: " + Arrays.toString(terminalService.findComPorts()));
-        System.out.println("Serial port was successfully opened");
+        Index.setNewsAreaText("Serial port was successfully opened" + "\n");
         try {
             serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
@@ -56,7 +55,7 @@ public class Terminal {
 
             comPortListener.setTerminalService(terminalService);
         } catch (SerialPortException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
         }
     }
 
@@ -66,14 +65,14 @@ public class Terminal {
             serialPort.closePort();
             serialPort = new SerialPort(SERIAL_PORT_NAME);
         } catch (SerialPortException e) {
-            Index.setNewsAreaText(e.getMessage());
+            Index.setNewsAreaText(e.getMessage() + "\n");
         }
         while (!newService.openSerialPort(serialPort)) {
             try {
                 System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Index.setNewsAreaText(e.getMessage());
+                Index.setNewsAreaText(e.getMessage() + "\n");
             }
         }
     }

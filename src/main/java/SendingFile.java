@@ -1,11 +1,11 @@
 import java.util.Arrays;
 
-public class JsonFile {
+public class SendingFile {
     double[] accelerometer;
     double[] gyroscope;
     double[] magnetometer;
 
-    public JsonFile(double[] accelerometer, double[] gyroscope, double[] magnetometer) {
+    public SendingFile(double[] accelerometer, double[] gyroscope, double[] magnetometer) {
         this.accelerometer = accelerometer;
         this.gyroscope = gyroscope;
         this.magnetometer = magnetometer;

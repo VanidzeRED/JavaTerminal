@@ -58,7 +58,7 @@ public class ReadingThread extends Thread {
         double[] a = parser(0, 1);
         double[] g = parser(6, 1);
         double[] m = parser(12, 1);
-        JsonFile file = new JsonFile(a, g, m);
+        SendingFile file = new SendingFile(a, g, m);
         byte[] jsonFileByteList = JSON.toJSONBytes(file, SerializerFeature.EMPTY);
         dataFile.writeToFile(Arrays.toString(a));
         dataFile.writeToFile(Arrays.toString(g));
