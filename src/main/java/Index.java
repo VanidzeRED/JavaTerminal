@@ -5,28 +5,23 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class Index extends JFrame {
-    static int buttonWidth = 130;
+    static int buttonWidth = 195;
     static int buttonHeight = 30;
     static JTextArea newsArea;
     static JTextArea receivedArea;
-    static JTextArea serverArea;
 
     public static void setNewsAreaText(String message) {
         newsArea.setText(message);
     }
 
-    public static void setReceivedAreaText(String receivedData) {
-        receivedArea.setText(receivedData);
-    }
-
-    public static void setServerAreaText(String message) {
-        serverArea.setText(message);
+    public static void setRecivedAreaText(String message) {
+        receivedArea.setText(message);
     }
 
     public Index () {
         super("Terminal for receiving data");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(470, 670);
+        this.setSize(470, 710);
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
@@ -201,15 +196,19 @@ public class Index extends JFrame {
             System.out.println(Terminal.fileType);
         });
 
-        newsArea = new JTextArea("News of terminal working process");
-        newsArea.setBounds(230, 320, 200, 80);
+        JLabel label4 = new JLabel("News of terminal working process");
+        label4.setFont(new Font(null, Font.BOLD, 14));
+        label4.setBounds(10, 490, 420, 30);
+
+        newsArea = new JTextArea();
+        newsArea.setBounds(10, 520, 420, 50);
         newsArea.setEditable(false);
         newsArea.setLineWrap(true);
         newsArea.setWrapStyleWord(true);
 
-        JLabel label4 = new JLabel("Received data");
-        label4.setFont(new Font(null, Font.BOLD, 14));
-        label4.setBounds(10, 400, 420, 30);
+        JLabel label5 = new JLabel("Received data");
+        label5.setFont(new Font(null, Font.BOLD, 14));
+        label5.setBounds(10, 400, 420, 30);
 
         receivedArea = new JTextArea();
         receivedArea.setBounds(10, 430, 420, 50);
@@ -217,27 +216,28 @@ public class Index extends JFrame {
         receivedArea.setLineWrap(true);
         receivedArea.setText("accelerometer:\ngyroscope:\nmagnetometer:");
 
-        JLabel label5 = new JLabel("Data returned from the server");
-        label5.setFont(new Font(null, Font.BOLD, 14));
-        label5.setBounds(10, 490, 420, 30);
-
-        serverArea = new JTextArea();
-        serverArea.setBounds(10, 520, 420, 50);
-        serverArea.setEditable(false);
-        serverArea.setLineWrap(true);
-        serverArea.setText("accelerometer:\ngyroscope:\nmagnetometer:");
-
         JButton startButton = new JButton("Start terminal");
         startButton.setBounds(10, 580, buttonWidth, buttonHeight);
-        startButton.addActionListener(e -> Terminal.start());
+        startButton.addActionListener(e -> {
+            if (Terminal.startingFlag) {
+                Terminal.start();
+            } else {
+                Terminal.restart();
+                }
+            }
+        );
 
         JButton checkButton = new JButton("Check COM's");
-        checkButton.setBounds(150, 580, buttonWidth, buttonHeight);
+        checkButton.setBounds(235, 580, buttonWidth, buttonHeight);
         checkButton.addActionListener(e -> newsArea.setText("Available serial ports: " +
                 Arrays.toString(TerminalService.findComPorts())));
 
+        JButton stopButton = new JButton("Stop terminal");
+        stopButton.setBounds(10, 620, buttonWidth, buttonHeight);
+        stopButton.addActionListener(e -> Terminal.stop());
+
         JButton exitButton = new JButton("Exit");
-        exitButton.setBounds(290, 580, buttonWidth, buttonHeight);
+        exitButton.setBounds(235, 620, buttonWidth, buttonHeight);
         exitButton.addActionListener(e -> System.exit(0));
 
         panel.add(startButton);
@@ -266,13 +266,13 @@ public class Index extends JFrame {
         panel.add(filenameField);
         panel.add(threadLabel);
         panel.add(threadField);
-        //panel.add(newsArea);
+        panel.add(newsArea);
         panel.add(label4);
-        panel.add(receivedArea);
         panel.add(label5);
-        panel.add(serverArea);
+        panel.add(receivedArea);
         panel.add(fileTypeLabel);
         panel.add(fileTypesComboBox);
+        panel.add(stopButton);
         this.getContentPane().add(panel);
         this.setVisible(true);
     }

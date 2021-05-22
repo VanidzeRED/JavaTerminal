@@ -15,7 +15,9 @@ public class SendingThread extends Thread{
     public void run() {
         try {
             semaphore.acquire();
-            publisher.sendMessage(sendingFileByteList);
+            if (sendingFileByteList != null) {
+                publisher.sendMessage(sendingFileByteList);
+            }
             semaphore.release();
         } catch (InterruptedException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");

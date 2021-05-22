@@ -120,7 +120,7 @@ public class TerminalService {
         dataFile.writeToFile(Arrays.toString(g));
         dataFile.writeToFile(Arrays.toString(m));
         dataFile.writeToFile("\n");
-        index.setReceivedAreaText(file.getData());
+        Index.setRecivedAreaText(file.getData());
         SendingThread sendingThread = new SendingThread(semaphore, publisher, sendingFileByteList);
         sendingThread.start();
     }

@@ -13,7 +13,7 @@ public class MqttPublisher {
         this.message = new MqttMessage();
         try {
             this.client = new MqttClient(Terminal.SERVER_ADDRESS, MqttClient.generateClientId());
-            System.out.println("Client created\n");
+            Index.setNewsAreaText("Client created\n");
         } catch (MqttException e) {
             Index.setNewsAreaText(e.getMessage() + "\nCan't create client");
         }
@@ -22,7 +22,7 @@ public class MqttPublisher {
     public void setConnection() {
         try {
             this.client.connect();
-            System.out.println("Connected to host\n");
+            Index.setNewsAreaText("Connected to host\n");
         } catch (MqttException e) {
             Index.setNewsAreaText(e.getMessage() + "\nCan't connect to host");
         }
@@ -54,7 +54,7 @@ public class MqttPublisher {
                 if(Terminal.fileType == FileTypes.ProtocolBuffers) {
                     newFile = null;
                 }
-                Index.setServerAreaText(newFile.getData());
+                System.out.println(newFile.getData());
             };
             client.subscribe(Terminal.MQTT_TOPIC, messageListener);
         } catch (MqttException e) {

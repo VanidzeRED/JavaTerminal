@@ -8,7 +8,11 @@ public class Terminal {
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
     static Index index;
-    static FileTypes fileType = FileTypes.JSON;
+    static FileTypes fileType = FileTypes.XML;
+    static DataFile dataFile;
+    static SerialPort serialPort;
+    static MqttPublisher publisher;
+    public static boolean startingFlag;
 
     //current address: tcp://62.77.153.231:1883
 
@@ -23,9 +27,9 @@ public class Terminal {
     static int THREAD_COUNT = 8;
 
     public static void start() {
-        SerialPort serialPort = new SerialPort(SERIAL_PORT_NAME);
-        DataFile dataFile = new DataFile(FILE_NAME);
-        MqttPublisher publisher = new MqttPublisher();
+        startingFlag = false;
+        serialPort = new SerialPort(SERIAL_PORT_NAME);
+        publisher = new MqttPublisher();
         TerminalService terminalService = new TerminalService();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         terminalService.setIndex(index);
@@ -59,25 +63,47 @@ public class Terminal {
         }
     }
 
-    public static void reconnect(SerialPort serialPort) {
-        TerminalService newService = new TerminalService();
+    public static void stop() {
         try {
+            serialPort.removeEventListener();
             serialPort.closePort();
-            serialPort = new SerialPort(SERIAL_PORT_NAME);
+        } catch (SerialPortException ignored) {}
+    }
+
+    public static void restart() {
+        TerminalService terminalService = new TerminalService();
+        Semaphore semaphore = new Semaphore(THREAD_COUNT);
+        terminalService.setIndex(index);
+        while (!terminalService.openSerialPort(serialPort)) {
+            try {
+                Index.setNewsAreaText(Arrays.toString(TerminalService.findComPorts()));
+                Thread.sleep(2000);
+            } catch (InterruptedException ignored) {}
+        }
+        Index.setNewsAreaText("Serial port was successfully opened" + "\n");
+        try {
+            serialPort.setParams(BAUDRATE, DATABITS, STOPBITS, PARITY);
+            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN |
+                    SerialPort.FLOWCONTROL_RTSCTS_OUT);
+
+            ComPortListener comPortListener = new ComPortListener();
+            comPortListener.setSerialPort(serialPort);
+
+            terminalService.setSerialPort(serialPort);
+            terminalService.setDataFile(dataFile);
+            terminalService.setPublisher(publisher);
+            terminalService.setSemaphore(semaphore);
+            serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
+
+            comPortListener.setTerminalService(terminalService);
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
-        }
-        while (!newService.openSerialPort(serialPort)) {
-            try {
-                System.out.println("Available serial ports: " + Arrays.toString(newService.findComPorts()));
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Index.setNewsAreaText(e.getMessage() + "\n");
-            }
         }
     }
 
     public static void main(String[] args) {
+        startingFlag = true;
+        dataFile = new DataFile(FILE_NAME);
         index = new Index();
     }
 }
