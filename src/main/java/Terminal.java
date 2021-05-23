@@ -67,6 +67,7 @@ public class Terminal {
         try {
             serialPort.removeEventListener();
             serialPort.closePort();
+            Index.setNewsAreaText("Terminal has stopped receiving");
         } catch (SerialPortException ignored) {}
     }
 
