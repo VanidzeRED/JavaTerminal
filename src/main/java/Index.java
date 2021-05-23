@@ -87,14 +87,15 @@ public class Index extends JFrame {
         stopbitsLabel.setBounds(10, 220, 200, 30);
 
         int[] stopbitsIntArray = {SerialPort.STOPBITS_1,
-                SerialPort.STOPBITS_1_5
+                SerialPort.STOPBITS_1_5,
+                SerialPort.STOPBITS_2
         };
 
-        String[] stopbitsArray = {"0", "1"};
+        String[] stopbitsArray = {"1", "1.5", "2"};
 
         JComboBox<String> stopbitsComboBox = new JComboBox<>(stopbitsArray);
         stopbitsComboBox.setBounds(10, 250, 200, 30);
-        stopbitsComboBox.setSelectedIndex(0);
+        stopbitsComboBox.setSelectedIndex(1);
         stopbitsComboBox.addActionListener(e -> {
             Terminal.DATABITS = stopbitsIntArray[stopbitsComboBox.getSelectedIndex()];
             System.out.println(Terminal.DATABITS);
