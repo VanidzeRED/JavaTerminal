@@ -4,12 +4,14 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
+import javax.swing.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
 public class TerminalService {
@@ -18,6 +20,7 @@ public class TerminalService {
     DataFile dataFile;
     Semaphore semaphore;
     byte[] receivedData;
+    long timer;
     Index index;
 
     public void setSerialPort(SerialPort serialPort) {
@@ -123,5 +126,21 @@ public class TerminalService {
         Index.setRecivedAreaText(file.getData());
         SendingThread sendingThread = new SendingThread(semaphore, publisher, sendingFileByteList);
         sendingThread.start();
+    }
+
+    public void resetTimer() {
+        timer = 10;
+    }
+
+    public void startTimer(){
+        while (timer > 0) {
+            timer--;
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ignored) {}
+        }
+        Index.setRecivedAreaText("Serial port connection has lost");
+        //Terminal.stop();
+        //Terminal.restart();
     }
 }

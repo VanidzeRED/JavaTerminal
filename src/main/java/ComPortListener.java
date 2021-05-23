@@ -21,9 +21,11 @@ public class ComPortListener implements SerialPortEventListener {
 
     public void setTerminalService(TerminalService terminalService) {
         this.terminalService = terminalService;
+        terminalService.resetTimer();
     }
 
     public void serialEvent(SerialPortEvent event) {
+        terminalService.resetTimer();
         byte check;
         if (event.isRXCHAR() && event.getEventValue() > 0) {
             try {

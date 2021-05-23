@@ -61,6 +61,7 @@ public class Terminal {
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
         }
+        terminalService.startTimer();
     }
 
     public static void stop() {
@@ -100,6 +101,7 @@ public class Terminal {
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
         }
+        //terminalService.startTimer();
     }
 
     public static void main(String[] args) {
