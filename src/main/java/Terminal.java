@@ -35,7 +35,7 @@ public class Terminal {
         terminalService.setIndex(index);
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
-        //publisher.subscribe();
+        publisher.subscribe();
         while (!terminalService.openSerialPort(serialPort)) {
             try {
                 Index.setNewsAreaText(Arrays.toString(TerminalService.findComPorts()));
@@ -61,7 +61,7 @@ public class Terminal {
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
         }
-        terminalService.startTimer();
+        //terminalService.startTimer();
     }
 
     public static void stop() {

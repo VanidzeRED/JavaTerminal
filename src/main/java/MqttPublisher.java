@@ -44,12 +44,14 @@ public class MqttPublisher {
                 SendingFile newFile = null;
                 if(Terminal.fileType == FileTypes.JSON) {
                     newFile = JSON.parseObject(String.valueOf(message), SendingFile.class);
+                    System.out.println("JSON");
                 }
                 if(Terminal.fileType == FileTypes.XML) {
                     JAXBContext context = JAXBContext.newInstance(SendingFile.class);
                     Unmarshaller unmarshaller = context.createUnmarshaller();
                     StringReader reader = new StringReader(String.valueOf(message));
                     newFile = (SendingFile) unmarshaller.unmarshal(reader);
+                    System.out.println("XML");
                 }
                 if(Terminal.fileType == FileTypes.ProtocolBuffers) {
                     newFile = null;

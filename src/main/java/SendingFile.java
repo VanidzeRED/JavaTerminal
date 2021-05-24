@@ -1,9 +1,18 @@
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
+
+@XmlRootElement
 
 public class SendingFile {
     double[] accelerometer;
     double[] gyroscope;
     double[] magnetometer;
+
+    public SendingFile(){
+        accelerometer = new double[0];
+        gyroscope = new double[0];
+        magnetometer = new double[0];
+    }
 
     public SendingFile(double[] accelerometer, double[] gyroscope, double[] magnetometer) {
         this.accelerometer = accelerometer;

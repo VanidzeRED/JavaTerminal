@@ -4,7 +4,6 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 
-import javax.swing.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -114,7 +113,9 @@ public class TerminalService {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 marshaller.marshal(file, fileWriter);
                 sendingFileByteList = fileWriter.toString().getBytes();
-            } catch (JAXBException ignored) {}
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
         }
         if (Terminal.fileType == FileTypes.ProtocolBuffers) {
             file = null;
@@ -129,7 +130,7 @@ public class TerminalService {
     }
 
     public void resetTimer() {
-        timer = 10;
+        timer = 1000;
     }
 
     public void startTimer(){
