@@ -23,6 +23,7 @@ public class Index extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(470, 710);
 
+
         JPanel panel = new JPanel();
         panel.setLayout(null);
 

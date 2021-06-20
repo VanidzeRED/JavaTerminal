@@ -72,6 +72,7 @@ public class ReadingThread extends Thread {
     public void run() {
         //doTerminalOperation();
         terminalService.doTerminalOperation(receivedData);
+        //Terminal.readingThread = this;
         /*
         semaphore = terminalService.getSemaphore();
         try {

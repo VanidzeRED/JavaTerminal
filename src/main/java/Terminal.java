@@ -12,6 +12,8 @@ public class Terminal {
     static DataFile dataFile;
     static SerialPort serialPort;
     static MqttPublisher publisher;
+    static TerminalService terminalService;
+    public static ReadingThread readingThread;
     public static boolean startingFlag;
 
     //current address: tcp://62.77.153.231:1883
@@ -31,11 +33,12 @@ public class Terminal {
         serialPort = new SerialPort(SERIAL_PORT_NAME);
         publisher = new MqttPublisher();
         TerminalService terminalService = new TerminalService();
+
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         terminalService.setIndex(index);
         dataFile.writeToFile("     accelerometer          gyroscope           magnetometer\n");
         publisher.setConnection();
-        publisher.subscribe();
+        //publisher.subscribe();
         while (!terminalService.openSerialPort(serialPort)) {
             try {
                 Index.setNewsAreaText(Arrays.toString(TerminalService.findComPorts()));
@@ -55,13 +58,12 @@ public class Terminal {
             terminalService.setDataFile(dataFile);
             terminalService.setPublisher(publisher);
             terminalService.setSemaphore(semaphore);
+            Terminal.terminalService = terminalService;
             serialPort.addEventListener(comPortListener, SerialPort.MASK_RXCHAR);
-
             comPortListener.setTerminalService(terminalService);
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
         }
-        //terminalService.startTimer();
     }
 
     public static void stop() {
@@ -76,6 +78,7 @@ public class Terminal {
         TerminalService terminalService = new TerminalService();
         Semaphore semaphore = new Semaphore(THREAD_COUNT);
         terminalService.setIndex(index);
+        serialPort = new SerialPort(SERIAL_PORT_NAME);
         while (!terminalService.openSerialPort(serialPort)) {
             try {
                 Index.setNewsAreaText(Arrays.toString(TerminalService.findComPorts()));
@@ -101,7 +104,6 @@ public class Terminal {
         } catch (SerialPortException e) {
             Index.setNewsAreaText(e.getMessage() + "\n");
         }
-        //terminalService.startTimer();
     }
 
     public static void main(String[] args) {
