@@ -236,7 +236,7 @@ public class Index extends JFrame {
 
         JButton stopButton = new JButton("Stop terminal");
         stopButton.setBounds(10, 620, buttonWidth, buttonHeight);
-        stopButton.addActionListener(e -> Terminal.stop());
+        stopButton.addActionListener(e -> Terminal.abort());
 
         JButton exitButton = new JButton("Exit");
         exitButton.setBounds(235, 620, buttonWidth, buttonHeight);

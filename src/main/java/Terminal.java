@@ -1,9 +1,11 @@
+import javafx.application.Application;
+import javafx.stage.Stage;
 import jssc.*;
 
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
-public class Terminal {
+public class Terminal extends Application {
     static String SERIAL_PORT_NAME = "COM7";
     static String FILE_NAME = "info.txt";
     static String SERVER_ADDRESS = "tcp://62.77.153.231:1883";
@@ -13,7 +15,6 @@ public class Terminal {
     static SerialPort serialPort;
     static MqttPublisher publisher;
     static TerminalService terminalService;
-    public static ReadingThread readingThread;
     public static boolean startingFlag;
 
     //current address: tcp://62.77.153.231:1883
@@ -66,7 +67,7 @@ public class Terminal {
         }
     }
 
-    public static void stop() {
+    public static void abort() {
         try {
             serialPort.removeEventListener();
             serialPort.closePort();
@@ -106,9 +107,14 @@ public class Terminal {
         }
     }
 
-    public static void main(String[] args) {
+    @Override
+    public void start(Stage stage) throws Exception {
         startingFlag = true;
         dataFile = new DataFile(FILE_NAME);
         index = new Index();
+    }
+
+    public static void main(String[] args) {
+        Application.launch(args);
     }
 }
